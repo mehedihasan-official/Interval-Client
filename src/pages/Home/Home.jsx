@@ -9,7 +9,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    if (user && role) {
       // Check if the user is an admin
       if (role === "admin") {
         navigate("/admin-panel/admin-overview");

@@ -1,16 +1,16 @@
-import { createContext, useState, useEffect } from "react";
-import Swal from "sweetalert2";
-import app from "../firebase/firebase.config";
+import axios from "axios";
 import {
   createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signOut as firebaseSignOut,
 } from "firebase/auth";
-import axios from "axios";
+import { createContext, useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import app from "../firebase/firebase.config";
 
 export const AuthContext = createContext();
 
@@ -26,7 +26,6 @@ const AuthProvider = ({ children }) => {
   const [allBookingsData, setAllBookingsData] = useState([]);
   const [bookingsData, setBookingsData] = useState([]);
   const [paymentInfoData, setPaymentInfoData] = useState({});
-
 
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
@@ -45,7 +44,14 @@ const AuthProvider = ({ children }) => {
   };
 
   const createProfile = async (allData) => {
-    const { membership, phone, userID, email, password, name = "New User" } = allData;
+    const {
+      membership,
+      phone,
+      userID,
+      email,
+      password,
+      name = "New User",
+    } = allData;
 
     if (!email || !password) {
       showAlert("Email and Password are required", "error");
@@ -64,7 +70,11 @@ const AuthProvider = ({ children }) => {
         throw new Error("Failed to check email existence");
       }
 
-      const firebaseUser = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       const userProfileData = {
         name,
         userId: userID,
@@ -73,11 +83,14 @@ const AuthProvider = ({ children }) => {
         telephone: phone,
       };
 
-      const backendResponse = await fetch(`${import.meta.env.VITE_server_API}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userProfileData),
-      });
+      const backendResponse = await fetch(
+        `${import.meta.env.VITE_server_API}/users`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userProfileData),
+        },
+      );
 
       if (!backendResponse.ok) {
         throw new Error("Failed to send user data to backend");
@@ -104,7 +117,7 @@ const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_server_API}/users?email=${email}`
+        `${import.meta.env.VITE_server_API}/users?email=${email}`,
       );
       setUserData(response.data);
       return response.data;
@@ -113,19 +126,19 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-   // Set User Role
-   const setUserRole = async (email) => {
+  // Set User Role
+  const setUserRole = async (email) => {
     if (!email) return; // Exit if email is not available
-  
+
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_server_API}/users?email=${email}`
+        `${import.meta.env.VITE_server_API}/users?email=${email}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch user data from backend");
       }
       const userData = await response.json();
-  
+
       if (userData.isAdmin) {
         setRole("admin");
       } else {
@@ -136,7 +149,6 @@ const AuthProvider = ({ children }) => {
       setRole(null); // Reset role if there's an error
     }
   };
-
 
   const googleLogin = async () => {
     setLoading(true);
@@ -196,18 +208,28 @@ const AuthProvider = ({ children }) => {
   };
 
   const fetchAllUsers = async () => {
+    if (!import.meta.env.VITE_server_API) return;
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_server_API}/all-users`);
+      const response = await fetch(
+        `${import.meta.env.VITE_server_API}/all-users`,
+      );
       if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Failed to fetch users: ${response.status} ${response.statusText}`,
+        );
+      }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          "Received non-JSON response from server. Check if API URL is correct.",
+        );
       }
       const data = await response.json();
       setAllUsers(data);
       setAllUsersData(data);
     } catch (error) {
       console.error("Error fetching all users:", error.message);
-      showAlert("Failed to fetch users. Please try again later.", "error");
     } finally {
       setLoading(false);
     }
@@ -229,14 +251,14 @@ const AuthProvider = ({ children }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email, isAdmin }),
-        }
+        },
       );
 
       // Handle response
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
-          `Error updating user role: ${response.status} ${response.statusText} - ${errorText}`
+          `Error updating user role: ${response.status} ${response.statusText} - ${errorText}`,
         );
       }
 
@@ -245,25 +267,36 @@ const AuthProvider = ({ children }) => {
 
       // Update state with the updated user
       setAllUsers((prevUsers) =>
-        prevUsers.map((user) => (user.email === email ? updatedUser : user))
+        prevUsers.map((user) => (user.email === email ? updatedUser : user)),
       );
       setAllUsersData((prevUsers) =>
-        prevUsers.map((user) => (user.email === email ? updatedUser : user))
+        prevUsers.map((user) => (user.email === email ? updatedUser : user)),
       );
 
       // Show success message
       showAlert("User role updated successfully", "success");
     } catch (error) {
       console.error("Error updating user role:", error.message);
-      showAlert(error.message || "Failed to update user role. Please try again later.", "error");
+      showAlert(
+        error.message || "Failed to update user role. Please try again later.",
+        "error",
+      );
     }
   };
 
   const fetchAllResorts = async () => {
+    if (!import.meta.env.VITE_server_API) return;
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_server_API}/resort-data`);
-      if (!response.ok) throw new Error(`Error fetching resorts: ${response.statusText}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_server_API}/resort-data`,
+      );
+      if (!response.ok)
+        throw new Error(`Error fetching resorts: ${response.statusText}`);
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Received non-JSON response from server.");
+      }
       const data = await response.json();
       setAllResortData(data);
     } catch (error) {
@@ -273,91 +306,86 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-
   // Fetch bookings data based on user's email
-const fetchBookingsData = async (email) => {
-  setLoading(true);
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_server_API}/bookings?email=${email}`
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Error fetching bookings data: ${response.status} ${response.statusText}`
+  const fetchBookingsData = async (email) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_server_API}/bookings?email=${email}`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching bookings data: ${response.status} ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      setBookingsData(data);
+    } catch (error) {
+      console.error("Error fetching bookings data:", error.message);
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    setBookingsData(data);
-  } catch (error) {
-    console.error("Error fetching bookings data:", error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-
-
-// Fetch payment information
-const fetchPaymentInformation = async (email) => {
-  setLoading(true);
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_server_API}/bookings?email=${email}`
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Error fetching payment information: ${response.status} ${response.statusText}`
+  // Fetch payment information
+  const fetchPaymentInformation = async (email) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_server_API}/bookings?email=${email}`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching payment information: ${response.status} ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setPaymentInfoData(data[0]); // Assuming the first object in the array is the needed payment info
+      } else {
+        setPaymentInfoData({});
+      }
+    } catch (error) {
+      console.error("Error fetching payment information:", error.message);
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    if (Array.isArray(data) && data.length > 0) {
-      setPaymentInfoData(data[0]); // Assuming the first object in the array is the needed payment info
-    } else {
-      setPaymentInfoData({});
-    }
+  };
 
-  } catch (error) {
-    console.error("Error fetching payment information:", error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-// Fetch all Booking Data
-const fetchAllBookingsData = async () => {
-  setLoading(true);
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_server_API}/all-bookings`
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Error fetching all resort data: ${response.status} ${response.statusText}`
+  // Fetch all Booking Data
+  const fetchAllBookingsData = async () => {
+    if (!import.meta.env.VITE_server_API) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_server_API}/all-bookings`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Error fetching all resort data: ${response.status} ${response.statusText}`,
+        );
+      }
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Received non-JSON response from server.");
+      }
+      const data = await response.json();
+      setAllBookingsData(data);
+    } catch (error) {
+      console.error("Error fetching all resort data:", error.message);
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    setAllBookingsData(data);
-  } catch (error) {
-    console.error("Error fetching all resort data:", error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
-  
     if (email) {
-      
       fetchUserByEmail(email);
       setUserRole(email);
     }
   }, [email]);
-  
-  useEffect(() => {
-    
-  }, [role]);
+
+  useEffect(() => {}, [role]);
 
   useEffect(() => {
     fetchAllResorts();
@@ -368,18 +396,17 @@ const fetchAllBookingsData = async () => {
       setUserRole(email);
       fetchBookingsData(email);
       fetchPaymentInformation(email);
-
     }
-  
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser?.email) {
         setEmail(currentUser.email);
-        setUserRole(currentUser.email); 
+        setUserRole(currentUser.email);
       }
       setLoading(false);
     });
-  
+
     return () => unsubscribe();
   }, [email]);
 
@@ -403,10 +430,11 @@ const fetchAllBookingsData = async () => {
     login,
     signOut,
     googleLogin,
-    
   };
 
-  return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

@@ -16,15 +16,15 @@ const NavbarOnDB = ({ activeItem, setActiveItem }) => {
   };
 
   return (
-    <div className="bg-white text-black w-full sticky top-0 z-10 shadow-md">
-      <div className="flex items-center justify-center  py-2">
+    <div className="bg-white text-black w-full sticky top-0 z-10">
+      <div className="flex items-center justify-start md:justify-center overflow-x-auto no-scrollbar py-2 px-4 gap-2">
         {menuItems.map((item) => (
           <button
             key={item.name}
-            className={`text-xs font-medium px-4 py-2 rounded-lg ${
+            className={`whitespace-nowrap text-xs md:text-sm font-medium px-4 py-2 rounded-lg transition-all ${
               activeItem?.name === item.name
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-gray-700 hover:text-blue-600 transition-colors"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
             }`}
             onClick={() => handleNavClick(item)}
           >

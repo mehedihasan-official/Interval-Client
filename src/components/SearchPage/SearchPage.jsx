@@ -1,130 +1,98 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import Loading from "../Loading";
-import ResortCard from "../ResortCard";
-import { AuthContext } from "../../providers/AuthProvider";
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation to access passed state
+import ResortCard from '../ResortCard';
 
 const SearchPage = () => {
-  const { allResortData } = useContext(AuthContext);
   const location = useLocation();
-  const [searchData, setSearchData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const searchResults = location.state?.results || []; // Access the filtered results passed from Gateways
+  const [currentPage, setCurrentPage] = useState(1); // State to manage the current page
+  const resortsPerPage = 10; // Number of resorts to display per page
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const searchQuery = queryParams.get("q") || "";
-    setSearchTerm(searchQuery);
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(searchResults.length / resortsPerPage);
 
-    if (location.state?.results) {
-      setSearchData(location.state.results);
-    }
-  }, [location.search, location.state]);
+  // Get the resorts for the current page
+  const indexOfLastResort = currentPage * resortsPerPage;
+  const indexOfFirstResort = indexOfLastResort - resortsPerPage;
+  const currentResorts = searchResults.slice(indexOfFirstResort, indexOfLastResort);
 
-  const performSearch = (query, data) => {
-    if (!query.trim()) return [];
-  
-    const queryWords = query.toLowerCase().split(/\s+/).filter(word => word.length > 0);
-  
-    return data.map((item) => {
-      const resortWords = (item.resortName || "").toLowerCase().split(/\s+/);
-      const locationWords = (item.location || "").toLowerCase().split(/\s+/);
-  
-      let matchedWords = [];
-      let resortMatches = 0;
-      let locationMatches = 0;
-  
-      queryWords.forEach(word => {
-        if (resortWords.includes(word)) {
-          matchedWords.push(word);
-          resortMatches++;
-        } else if (locationWords.includes(word)) {
-          matchedWords.push(word);
-          locationMatches++;
-        }
-      });
-  
-      const totalMatches = resortMatches + locationMatches;
-  
-      return {
-        ...item,
-        totalMatches,
-        resortMatches,
-        locationMatches,
-        matchedWords: [...new Set(matchedWords)],
-      };
-    })
-    .filter(item => item.totalMatches > 0)
-    .sort((a, b) => {
-      // Priority: total matches > resortName matches > location matches
-      if (b.totalMatches !== a.totalMatches) return b.totalMatches - a.totalMatches;
-      if (b.resortMatches !== a.resortMatches) return b.resortMatches - a.resortMatches;
-      return b.locationMatches - a.locationMatches;
-    });
-  };
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        if (searchTerm.trim() !== "") {
-          const filteredData = performSearch(searchTerm, allResortData);
-          setSearchData(filteredData);
-        } else if (!location.state?.results) {
-          setSearchData([]);
-        }
-      } catch (error) {
-        console.error("Error filtering search results:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [searchTerm, allResortData, location.state]);
-
-  const modifyPlaceName = (place_name) => {
-    if (!place_name) return "";
-    const regex = /\d+\s*Nights/;
-    return regex.test(place_name) ? place_name.replace(regex, "3 Nights") : place_name;
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-center text-[#18294B] mb-2">
-          {searchTerm ? `Search Results for "${searchTerm}"` : 'Search Results'}
-        </h1>
-        <p className="text-center text-gray-600">
-          {searchData.length} {searchData.length === 1 ? 'result' : 'results'} found
-        </p>
-      </div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold text-center text-[#18294B] mb-6">Search Results</h1>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loading />
-        </div>
+      {/* Display message if no results are found */}
+      {searchResults.length === 0 ? (
+        <p className="text-gray-600">No matching destinations found.</p>
       ) : (
         <>
-          {searchData.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {searchData.map((resort) => {
-                const modifiedResort = {
-                  ...resort,
-                  place_name: modifyPlaceName(resort.place_name || resort.resortName),
-                };
-                return (
-                  <Link to={`/singleResortPage/${resort._id}`} key={resort._id}>
-                    <ResortCard resort={modifiedResort} />
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="text-center py-10">
-              <p className="text-gray-600 text-lg mb-4">
-                {searchTerm ? `No results found for "${searchTerm}"` : 'No search results'}
-              </p>
+          {/* Resort Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {currentResorts.map((resort) => (
+              <div key={resort._id} className="bg-white shadow-lg rounded-lg overflow-hidden">
+                <Link to={`/single-resort-page/${resort._id}`}>
+                  <ResortCard resort={resort} />
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-10">
+              <nav className="flex flex-wrap justify-center gap-2 max-w-full">
+                {/* Previous Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-2 sm:px-4 sm:py-2 rounded-md text-sm sm:text-base transition-colors ${
+                    currentPage === 1
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
+                  }`}
+                >
+                  Prev
+                </button>
+
+                {/* Page Numbers - Limited for better responsiveness */}
+                <div className="hidden sm:flex gap-2">
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => handlePageChange(index + 1)}
+                      className={`px-4 py-2 rounded-md transition-colors ${
+                        currentPage === index + 1
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mobile Page Indicator */}
+                <div className="sm:hidden flex items-center px-4 font-medium text-gray-700">
+                  {currentPage} / {totalPages}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-2 sm:px-4 sm:py-2 rounded-md text-sm sm:text-base transition-colors ${
+                    currentPage === totalPages
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
+                  }`}
+                >
+                  Next
+                </button>
+              </nav>
             </div>
           )}
         </>

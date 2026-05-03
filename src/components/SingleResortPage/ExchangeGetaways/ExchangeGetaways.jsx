@@ -14,130 +14,131 @@ const ExchangeGetaways = ({ resort }) => {
       alert('Please select both earliest and latest travel dates.');
       return;
     }
-
-
-     // Save data to local storage
-     const searchParams = {
-      earliestDate,
-      latestDate,
-      adults,
-      children,
-    };
-    localStorage.setItem("searchParams", JSON.stringify(searchParams));
-
-    // Redirect to the AvailableUnit page with resort data and search parameters
-    navigate('/available-unit', {
-      state: {
-        resort,
-        searchParams,
-      },
-    });
+    const searchParams = { earliestDate, latestDate, adults, children, vacationType: activeTab };
+    localStorage.setItem('searchParams', JSON.stringify(searchParams));
+    navigate('/available-unit', { state: { resort, searchParams } });
   };
 
+  const isExchange = activeTab === 'Exchange';
+  const isGetaways = activeTab === 'Getaways';
+
   return (
-    <div className="p-6">
-      {/* Tab Navigation */}
+    <div className="p-4 md:p-6">
       <div className="flex justify-center mb-6">
         <button
-          className={`px-4 py-2 font-semibold ${
-            activeTab === 'Exchange' ? 'bg-blue-500 text-white' : 'border-2 border-gray-200 text-gray-700'
-          } rounded-l-md`}
+          className={`px-6 py-2.5 font-semibold text-sm transition-all rounded-l-md border-2 ${isExchange ? 'bg-[#18294B] text-white border-[#18294B]' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
           onClick={() => setActiveTab('Exchange')}
         >
-          Exchange
+          Exchange <span className="text-xs opacity-75">(Points)</span>
         </button>
         <button
-          className={`px-4 py-2 font-semibold ${
-            activeTab === 'Getaways' ? 'bg-blue-500 text-white' : 'border-2 border-gray-200 text-gray-700'
-          } rounded-r-md`}
+          className={`px-6 py-2.5 font-semibold text-sm transition-all rounded-r-md border-2 border-l-0 ${isGetaways ? 'bg-amber-500 text-white border-amber-500' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
           onClick={() => setActiveTab('Getaways')}
         >
-          Getaways
+          Getaways <span className="text-xs opacity-75">(Cash)</span>
         </button>
       </div>
 
-      {/* Tab Content */}
-      <div className="bg-white p-6 rounded">
-        {activeTab === 'Exchange' && (
+      <div className="bg-white p-4 md:p-6 rounded-lg border shadow-sm">
+        {isExchange && (
           <div>
-            <h2 className="text-xl font-bold mb-4">Vacation Exchange</h2>
-
-            {/* Date Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="mb-5 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h2 className="text-lg font-bold text-[#18294B] mb-1">Points Exchange Vacation</h2>
+              <p className="text-sm text-gray-600">Redeem your Interval points to book this resort.</p>
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                {[{ t: 'Studio', p: '7,000/night' }, { t: '1 Bedroom', p: '7,000/night' }, { t: '2 Bedroom', p: '9,000/night' }, { t: '3 Bedroom', p: '10,500/night' }].map(u => (
+                  <div key={u.t} className="bg-white border border-blue-100 rounded p-2 text-center">
+                    <p className="font-semibold text-gray-700">{u.t}</p>
+                    <p className="text-blue-600 font-bold">{u.p}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">* +500 points surcharge per weekend night (Sat/Sun)</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label htmlFor="earliest-date" className="block text-gray-700 font-medium mb-2">
-                  Earliest Travel Date:
-                </label>
-                <input
-                  type="date"
-                  id="earliest-date"
-                  className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                  value={earliestDate}
-                  onChange={(e) => setEarliestDate(e.target.value)}
-                />
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Earliest Travel Date</label>
+                <input type="date" className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:outline-none text-sm" value={earliestDate} min={new Date().toISOString().split('T')[0]} onChange={e => setEarliestDate(e.target.value)} />
               </div>
               <div>
-                <label htmlFor="latest-date" className="block text-gray-700 font-medium mb-2">
-                  Latest Travel Date:
-                </label>
-                <input
-                  type="date"
-                  id="latest-date"
-                  className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                  value={latestDate}
-                  onChange={(e) => setLatestDate(e.target.value)}
-                />
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Latest Travel Date</label>
+                <input type="date" className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:outline-none text-sm" value={latestDate} min={earliestDate || new Date().toISOString().split('T')[0]} onChange={e => setLatestDate(e.target.value)} />
               </div>
             </div>
-
-            {/* Divider */}
-            <hr className="my-6 border-gray-300" />
-
-            {/* Adults and Children */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <hr className="my-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
               <div>
-                <label htmlFor="adults" className="block text-gray-700 font-medium mb-2">
-                  Adults:
-                </label>
-                <select
-                  id="adults"
-                  className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                  value={adults}
-                  onChange={(e) => setAdults(parseInt(e.target.value, 10))}
-                >
-                  {Array.from({ length: 9 }, (_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {i + 1}
-                    </option>
-                  ))}
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Adults</label>
+                <select className="w-full border rounded-md px-3 py-2 text-sm" value={adults} onChange={e => setAdults(parseInt(e.target.value, 10))}>
+                  {Array.from({ length: 9 }, (_, i) => <option key={i+1} value={i+1}>{i+1}</option>)}
                 </select>
               </div>
               <div>
-                <label htmlFor="children" className="block text-gray-700 font-medium mb-2">
-                  Children:
-                </label>
-                <select
-                  id="children"
-                  className="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-300"
-                  value={children}
-                  onChange={(e) => setChildren(parseInt(e.target.value, 10))}
-                >
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <option key={i} value={i}>
-                      {i}
-                    </option>
-                  ))}
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Children</label>
+                <select className="w-full border rounded-md px-3 py-2 text-sm" value={children} onChange={e => setChildren(parseInt(e.target.value, 10))}>
+                  {Array.from({ length: 10 }, (_, i) => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>
             </div>
-
-            {/* Begin Search Button */}
-            <button
-              className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
-              onClick={handleSearch}
-            >
-              Begin Search
+            <button className="w-full bg-[#18294B] text-white font-bold py-3 rounded-lg hover:bg-[#0f1d35] transition-colors" onClick={handleSearch}>
+              Search Available Units (Points)
             </button>
+          </div>
+        )}
+
+        {isGetaways && (
+          <div>
+            <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <h2 className="text-lg font-bold text-[#18294B] mb-1">Getaway Vacation (Cash)</h2>
+              <p className="text-sm text-gray-600">Book with cash at our competitive Last Call rates.</p>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                {[{ t: 'Studio', p: '$309' }, { t: '1 Bedroom', p: '$339' }, { t: '2+ Bedroom', p: '$379' }].map(u => (
+                  <div key={u.t} className="bg-white border border-amber-100 rounded p-2 text-center">
+                    <p className="font-semibold text-gray-700">{u.t}</p>
+                    <p className="text-amber-600 font-bold">{u.p}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">* Prices shown before tax</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Earliest Travel Date</label>
+                <input type="date" className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm" value={earliestDate} min={new Date().toISOString().split('T')[0]} onChange={e => setEarliestDate(e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Latest Travel Date</label>
+                <input type="date" className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm" value={latestDate} min={earliestDate || new Date().toISOString().split('T')[0]} onChange={e => setLatestDate(e.target.value)} />
+              </div>
+            </div>
+            <hr className="my-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div>
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Adults</label>
+                <select className="w-full border rounded-md px-3 py-2 text-sm" value={adults} onChange={e => setAdults(parseInt(e.target.value, 10))}>
+                  {Array.from({ length: 9 }, (_, i) => <option key={i+1} value={i+1}>{i+1}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1 text-sm">Children</label>
+                <select className="w-full border rounded-md px-3 py-2 text-sm" value={children} onChange={e => setChildren(parseInt(e.target.value, 10))}>
+                  {Array.from({ length: 10 }, (_, i) => <option key={i} value={i}>{i}</option>)}
+                </select>
+              </div>
+            </div>
+            <button className="w-full bg-amber-500 text-white font-bold py-3 rounded-lg hover:bg-amber-600 transition-colors" onClick={handleSearch}>
+              Search Available Units (Cash)
+            </button>
+          </div>
+        )}
+
+        {!activeTab && (
+          <div className="text-center py-10 text-gray-400">
+            <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p className="font-medium">Select a vacation type to begin.</p>
+            <p className="text-sm mt-1">Choose <strong>Exchange</strong> to pay with points or <strong>Getaways</strong> to pay with cash.</p>
           </div>
         )}
       </div>

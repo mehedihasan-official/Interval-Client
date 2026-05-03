@@ -12,154 +12,159 @@ import { AuthContext } from "../../providers/AuthProvider";
 import { TbBeach } from "react-icons/tb";
 
 const AdminPanel = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, signOut } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   const handleMenuItemClick = (path) => {
-    setMobileMenuOpen(false);
+    setIsSidebarOpen(false);
     navigate(path);
   };
 
   const handleLogout = async () => {
     try {
-      await signOut(); // Call the signOut function from AuthContext
-      navigate("/"); // Redirect to the home page after logout
+      await signOut();
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
+  const adminLinks = [
+    { path: "/admin-panel/admin-overview", label: "Overview", icon: <MdViewQuilt /> },
+    { path: "/admin-panel/users-bookings", label: "Users Bookings", icon: <MdLibraryBooks /> },
+    { path: "/admin-panel/user-control", label: "User Control", icon: <AiOutlineUsergroupAdd /> },
+    { path: "/input-resort-data", label: "Resort Input Form", icon: <FaWpforms /> },
+    { path: "/admin-panel/admin-control", label: "Admin Control", icon: <RiAdminLine /> },
+  ];
+
+  const sharedLinks = [
+    { path: "/dashboard/gateways", label: "Home", icon: <FaHome /> },
+    { path: "/resort-directory", label: "Resort Directory", icon: <TbBeach /> },
+  ];
+
   return (
-    <div className="lg:flex h-screen">
-      {/* Sidebar for LG screens */}
-      <div className="hidden lg:block lg:w-64 lg:flex-shrink-0 bg-slate-200 h-screen">
-        <ul className="menu p-4 text-gray-700 font-bold text-lg">
-          <li>
-            <Link to="admin-panel/admin-overview">
-              <HiOutlineHomeModern /> Overview
-            </Link>
-          </li>
-          <li>
-            <Link to="resort-input-form">Resort Input Form</Link>
-          </li>
-        </ul>
-      </div>
-
-      {/* Mobile navigation */}
-      <div className="lg:hidden fixed top-0 w-full bg-gray-800 text-white p-4 z-50">
-        {/* AdminPanel header Section */}
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="text-xl font-bold text-primary">
-            <Link to="/" className="flex items-center space-x-2">
-              <span className="text-white text-3xl">interval</span>
-            </Link>
-          </div>
-
-          <div>
-            {user ? (
-              <div className="flex items-center gap-2">
-                <h1 className="text-white text-2xl">
-                  <FaUserCircle />
-                </h1>
-                <button
-                  onClick={handleLogout} // Use handleLogout instead of signOut
-                  className="text-white px-4 py-2 rounded-md hover:bg-primary-dark"
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* Sidebar for Desktop */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-[#18294B] text-white">
+        <div className="p-6 border-b border-blue-900">
+          <Link to="/" className="text-2xl font-bold tracking-tight">interval</Link>
+          <p className="text-xs text-blue-300 mt-1 uppercase tracking-widest">Admin Portal</p>
+        </div>
+        <nav className="flex-grow py-6 overflow-y-auto">
+          <ul className="space-y-1 px-4">
+            {adminLinks.map((link) => (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors font-medium"
                 >
-                  Log out
-                </button>
-              </div>
-            ) : (
-              <Link to="/login">
-                <button
-                  className="btn btn-ghost btn-circle text-white"
-                  aria-label="Toggle Menu"
+                  <span className="text-xl">{link.icon}</span>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="my-6 border-t border-blue-900 mx-4"></div>
+          <ul className="space-y-1 px-4">
+            {sharedLinks.map((link) => (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition-colors font-medium text-gray-300"
                 >
-                  <h1>Login</h1>
-                </button>
-              </Link>
-            )}
-          </div>
-
-          <button onClick={toggleMobileMenu} className="text-xl">
-            <BsFillMenuButtonWideFill />
+                  <span className="text-xl">{link.icon}</span>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="p-4 border-t border-blue-900">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all font-bold"
+          >
+            <FaUserCircle className="text-xl" />
+            Logout
           </button>
         </div>
+      </aside>
 
-        <Transition
-          show={mobileMenuOpen}
-          enter="transition-transform duration-300"
-          enterFrom="-translate-y-full"
-          enterTo="translate-y-0"
-          leave="transition-transform duration-300"
-          leaveFrom="translate-y-0"
-          leaveTo="-translate-y-full"
-        >
-          <div className="bg-gray-200 p-4 absolute top-0 left-0 right-0 mt-12 z-50">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold"></h2>
-              <button onClick={toggleMobileMenu} className="text-2xl text-gray-700">
-                <IoMdClose />
-              </button>
-            </div>
-            <ul className="menu text-gray-700 font-bold text-xl">
-              <li>
-                <button onClick={() => handleMenuItemClick("/admin-panel/admin-overview")}>
-                  <MdViewQuilt /> Admin Overview
-                </button>
-              </li>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 w-full bg-[#18294B] text-white p-4 z-[60] flex items-center justify-between shadow-lg">
+        <div className="flex items-center gap-3">
+          <button onClick={toggleSidebar} className="p-2 hover:bg-blue-800 rounded-lg">
+            <BsFillMenuButtonWideFill className="text-2xl" />
+          </button>
+          <span className="text-xl font-bold">Admin</span>
+        </div>
+        <div className="flex items-center gap-3">
+          {user && <FaUserCircle className="text-2xl text-blue-300" />}
+          <button onClick={handleLogout} className="text-xs font-bold bg-red-500 px-3 py-1.5 rounded hover:bg-red-600">
+            Logout
+          </button>
+        </div>
+      </div>
 
-              <li>
-                <button onClick={() => handleMenuItemClick("/admin-panel/users-bookings")}>
-                  <MdLibraryBooks /> Users Bookings
-                </button>
-              </li>
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-[70] lg:hidden backdrop-blur-sm"
+          onClick={toggleSidebar}
+        ></div>
+      )}
 
-              <li>
-                <button onClick={() => handleMenuItemClick("/admin-panel/user-control")}>
-                  <AiOutlineUsergroupAdd /> User Control
-                </button>
-              </li>
-
-              <li>
-                <button onClick={() => handleMenuItemClick("/input-resort-data")}>
-                  <FaWpforms /> Resort Input Form
-                </button>
-              </li>
-
-              <li>
-                <button onClick={() => handleMenuItemClick("/admin-panel/admin-control")}>
-                  <RiAdminLine /> Admin Control
-                </button>
-              </li>
-
-              <div className="divider"></div>
-
-              <li>
-                <button onClick={() => handleMenuItemClick("/")}>
-                  <FaHome /> Home
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleMenuItemClick("/resort-directory")}>
-                <TbBeach /> Resort Directory
-                </button>
-              </li>
-            </ul>
+      {/* Mobile Sidebar */}
+      <aside className={`fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-[80] transform transition-transform duration-300 ease-in-out lg:hidden ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="bg-[#18294B] p-6 text-white flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">Menu</h2>
+            <p className="text-xs text-blue-300 uppercase">Admin Control</p>
           </div>
-        </Transition>
-      </div>
+          <button onClick={toggleSidebar} className="p-2 hover:bg-blue-800 rounded-full">
+            <IoMdClose className="text-2xl" />
+          </button>
+        </div>
+        <nav className="p-4 overflow-y-auto h-[calc(100%-120px)]">
+          <ul className="space-y-1">
+            {adminLinks.map((link) => (
+              <li key={link.path}>
+                <button
+                  onClick={() => handleMenuItemClick(link.path)}
+                  className="flex items-center gap-4 w-full px-4 py-4 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-[#18294B] transition-all font-semibold border-b border-gray-50 text-left"
+                >
+                  <span className="text-2xl text-blue-600">{link.icon}</span>
+                  {link.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="my-6 border-t border-gray-100"></div>
+          <ul className="space-y-1">
+            {sharedLinks.map((link) => (
+              <li key={link.path}>
+                <button
+                  onClick={() => handleMenuItemClick(link.path)}
+                  className="flex items-center gap-4 w-full px-4 py-4 rounded-xl text-gray-500 hover:bg-gray-50 transition-all font-medium text-left"
+                >
+                  <span className="text-2xl text-gray-400">{link.icon}</span>
+                  {link.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
 
-      {/* Content area */}
-      <div className="lg:flex-grow mt-16 lg:mt-0">
-        {/* Page content here */}
-        <Outlet />
-      </div>
+      {/* Main Content Area */}
+      <main className="flex-grow overflow-y-auto mt-16 lg:mt-0 p-4 md:p-8 lg:p-12">
+        <div className="max-w-7xl mx-auto">
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 };

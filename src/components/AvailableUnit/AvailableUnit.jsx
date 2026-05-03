@@ -1,110 +1,207 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// Points per night by unit type
+const getPointsPerNight = (unitType) => {
+  switch (unitType) {
+    case "Studio": return 7000;
+    case "1 Bedroom": return 7000;
+    case "2 Bedroom": return 9000;
+    case "3 Bedroom": return 10500;
+    case "4 Bedroom": return 12500;
+    default: return 7000;
+  }
+};
+
+// Cash price by unit type
+const getCashPrice = (unitType) => {
+  switch (unitType) {
+    case "Studio": return 309;
+    case "1 Bedroom": return 339;
+    default: return 379; // 2BR, 3BR, 4BR
+  }
+};
+
+// Calculate points including weekend surcharge
+const calculatePoints = (startDate, endDate, unitType) => {
+  const basePointsPerNight = getPointsPerNight(unitType);
+  let basePoints = 0;
+  let weekendNights = 0;
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+  while (current < end) {
+    const day = current.getDay();
+    if (day === 0 || day === 6) weekendNights++;
+    basePoints += basePointsPerNight;
+    current.setDate(current.getDate() + 1);
+  }
+  const weekendSurcharge = weekendNights * 500;
+  return { basePoints, weekendNights, weekendSurcharge, totalPoints: basePoints + weekendSurcharge };
+};
+
+const UNIT_TYPES = ["Studio", "1 Bedroom", "2 Bedroom", "3 Bedroom", "4 Bedroom"];
+
 const AvailableUnit = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { resort, earliestDate, latestDate, adults, children } = location.state || {};
-  const [isUsageVisible, setIsUsageVisible] = useState(false);
+  const { resort, searchParams } = location.state || {};
+  const vacationType = searchParams?.vacationType || "Getaways";
+  const isPoints = vacationType === "Exchange";
 
-  const randomUnits = ["2BED", "1BEDA", "1BEDB"];
-  const randomYears = ["2025", "2026"];
-  
-  // Modified to select a single random year and add a price property
-  const generateCards = () =>
-    Array.from({ length: Math.floor(Math.random() * 4) + 3 }, () => ({
-      usage: randomYears[Math.floor(Math.random() * randomYears.length)], // Single year
+  const [selectedUnit, setSelectedUnit] = useState(null);
+
+  if (!resort || !searchParams) {
+    return <div className="p-6 text-center text-red-500">Error: Missing booking data. Please go back and try again.</div>;
+  }
+
+  const { earliestDate, latestDate, adults, children } = searchParams;
+
+  const nights = Math.max(1, Math.ceil((new Date(latestDate) - new Date(earliestDate)) / (1000 * 60 * 60 * 24)));
+
+  const handleSelectUnit = (unitType) => {
+    const card = {
+      unit: unitType,
+      usage: new Date(earliestDate).getFullYear().toString(),
       status: "Available",
-      unit: randomUnits[Math.floor(Math.random() * randomUnits.length)],
-      size: "1 Bedroom | Full Kitchen | Sleeps 4 total | 4 private",
-      price: 379, // Set the price to $379
-    }));
+      size: `${unitType} | Full Kitchen | Sleeps ${unitType === 'Studio' ? 2 : unitType === '1 Bedroom' ? 4 : unitType === '2 Bedroom' ? 6 : 8} total`,
+      startDate: earliestDate,
+      endDate: latestDate,
+      nights,
+      vacationType,
+    };
 
-  const cardsData = generateCards();
+    if (isPoints) {
+      const pointsInfo = calculatePoints(earliestDate, latestDate, unitType);
+      card.points = pointsInfo.totalPoints;
+      card.basePoints = pointsInfo.basePoints;
+      card.weekendNights = pointsInfo.weekendNights;
+      card.weekendSurcharge = pointsInfo.weekendSurcharge;
+      card.pointsPerNight = getPointsPerNight(unitType);
+    } else {
+      card.price = getCashPrice(unitType);
+    }
 
-  const handleVacationExchange = (card) => {
-    navigate("/checkout", {
-      state: {
-        resort,
-        card, 
-        price: card.price, 
-      },
-    });
+    navigate("/checkout", { state: { resort, card, searchParams } });
   };
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="text-xl sm:text-2xl font-bold mb-4">My Units</h1>
-      <p className="text-gray-700 mb-4">
-        To view availability, please select the unit you would like to redeem.
-      </p>
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+      {/* Header */}
+      <div className={`mb-6 p-4 rounded-xl ${isPoints ? 'bg-[#18294B] text-white' : 'bg-amber-500 text-white'}`}>
+        <h1 className="text-xl sm:text-2xl font-bold">
+          {isPoints ? '🏅 Points Exchange — Select Your Unit' : '💳 Getaway Vacation — Select Your Unit'}
+        </h1>
+        <p className="text-sm opacity-90 mt-1">
+          {isPoints
+            ? 'Redeem your Interval points for this vacation'
+            : 'Book with cash at our competitive rates'}
+        </p>
+      </div>
 
-      <div className="mb-6">
-        <h2 className="text-lg sm:text-xl font-semibold mb-2">My Certificates</h2>
-        <div className="grid grid-cols-6 sm:flex-row items-center bg-gray-100 p-4 rounded shadow-sm">
-          <div className="col-span-2 text-blue-500 text-2xl mb-2 sm:mb-0 sm:mr-4">
-            <img src="https://www.intervalworld.com/images/ac/accommodation-certificate-logo.png" alt="" />
+      {/* Travel Info */}
+      <div className="bg-white border rounded-xl p-4 mb-6 shadow-sm">
+        <h2 className="font-semibold text-gray-700 mb-3">Your Travel Details</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <div className="bg-gray-50 rounded-lg p-3">
+            <p className="text-gray-500 text-xs uppercase font-medium">Check-in</p>
+            <p className="font-semibold mt-1">{new Date(earliestDate).toLocaleDateString()}</p>
           </div>
-          <div className="col-span-4 text-center sm:text-left">
-            <p className="font-medium">
-              {Math.floor(Math.random() * 4) + 1} Available
-            </p>
-            <button className="mt-2 text-blue-900 border font-semibold border-[#0077be] py-1 px-3 rounded hover:bg-blue-600">
-              View Certificates
-            </button>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <p className="text-gray-500 text-xs uppercase font-medium">Check-out</p>
+            <p className="font-semibold mt-1">{new Date(latestDate).toLocaleDateString()}</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <p className="text-gray-500 text-xs uppercase font-medium">Nights</p>
+            <p className="font-semibold mt-1">{nights}</p>
+          </div>
+          <div className="bg-gray-50 rounded-lg p-3">
+            <p className="text-gray-500 text-xs uppercase font-medium">Guests</p>
+            <p className="font-semibold mt-1">{adults} adults, {children} children</p>
           </div>
         </div>
       </div>
 
+      {/* Resort Summary */}
       {resort && (
-        <div className="w-full grid grid-cols-6 items-center border rounded mb-6">
-          <div className="w-full col-span-2 sm:w-1/3">
-            <img
-              src={resort.img}
-              alt={resort.resortName}
-              className="rounded object-cover w-full h-32"
-            />
-          </div>
-          <div className="col-span-3 ml-4 sm:ml-4 flex-1 sm:text-left">
-            <h3 className="text-lg font-semibold text-[#0077be]">
-              {resort.resortName}
-            </h3>
-            <p className="text-gray-600">{resort.location}</p>
-            <p className="font-bold uppercase mt-2 inline-block border px-2 py-1">
-              {resort.symbol}
-            </p>
-          </div>
-        </div>
-      )}
-
-      <div className="flex justify-center mb-6">
-        <button
-          className="text-gray-700 border py-2 px-4 rounded"
-          onClick={() => setIsUsageVisible(!isUsageVisible)}
-        >
-          {isUsageVisible ? "Hide Usage & Units" : "Show Usage & Units"}
-        </button>
-      </div>
-
-      {isUsageVisible && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {cardsData.map((card, index) => (
-            <div key={index} className="border p-4 rounded shadow-sm bg-gray-50">
-              <p className="font-semibold">Usage: {card.usage}</p>
-              <p className="text-gray-600">Status: {card.status}</p>
-              <p className="text-gray-600">Unit: {card.unit}</p>
-              <p className="text-gray-600">Size: {card.size}</p>
-              <p className="text-gray-600">Price: ${card.price}</p> {/* Display the price */}
-              <button
-                className="mt-4 bg-[#0077be] text-white py-2 px-4 rounded hover:bg-[#006eae]"
-                onClick={() => handleVacationExchange(card)}
-              >
-                Vacation Exchange
-              </button>
+        <div className="w-full border rounded-xl overflow-hidden mb-6 shadow-sm bg-white">
+          <div className="flex flex-col sm:flex-row">
+            <div className="w-full sm:w-44 h-40 sm:h-auto flex-shrink-0">
+              <img src={resort.img} alt={resort.resortName} className="w-full h-full object-cover" />
             </div>
-          ))}
+            <div className="p-4 flex-grow">
+              <h3 className="text-lg font-bold text-[#18294B] mb-1">{resort.resortName}</h3>
+              <p className="text-gray-600 text-sm mb-2">{resort.location}</p>
+              <span className="inline-block bg-gray-100 px-2 py-1 rounded text-xs font-bold text-gray-700 border">{resort.symbol}</span>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Unit Cards */}
+      <h2 className="text-lg font-bold text-gray-800 mb-4">Available Units</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {UNIT_TYPES.map((unitType) => {
+          const pts = isPoints ? calculatePoints(earliestDate, latestDate, unitType) : null;
+          const cashPrice = !isPoints ? getCashPrice(unitType) : null;
+
+          return (
+            <div
+              key={unitType}
+              className={`border-2 rounded-xl overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
+                selectedUnit === unitType
+                  ? isPoints ? 'border-[#18294B] shadow-md' : 'border-amber-500 shadow-md'
+                  : 'border-gray-200 hover:border-gray-400'
+              }`}
+              onClick={() => setSelectedUnit(unitType)}
+            >
+              {/* Card Header */}
+              <div className={`py-3 px-4 text-white text-center font-bold ${isPoints ? 'bg-[#18294B]' : 'bg-amber-500'}`}>
+                {unitType}
+              </div>
+
+              {/* Card Body */}
+              <div className="p-4 bg-white">
+                <div className="text-center mb-4">
+                  {isPoints ? (
+                    <>
+                      <p className="text-2xl font-bold text-[#18294B]">{pts.totalPoints.toLocaleString()}</p>
+                      <p className="text-xs text-gray-500">total points</p>
+                      <div className="mt-2 text-xs text-gray-600 space-y-1 text-left bg-gray-50 rounded p-2">
+                        <p>{getPointsPerNight(unitType).toLocaleString()} pts/night × {nights} nights</p>
+                        {pts.weekendNights > 0 && (
+                          <p className="text-orange-600">+{pts.weekendSurcharge.toLocaleString()} pts ({pts.weekendNights} weekend nights)</p>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-2xl font-bold text-amber-600">${cashPrice}</p>
+                      <p className="text-xs text-gray-500">+ tax per stay</p>
+                    </>
+                  )}
+                </div>
+
+                <div className="text-xs text-gray-600 mb-4 space-y-1">
+                  <p>✓ Status: <span className="font-semibold text-green-600">Available</span></p>
+                  <p>✓ Full Kitchen</p>
+                  <p>✓ Year: {new Date(earliestDate).getFullYear()}</p>
+                </div>
+
+                <button
+                  className={`w-full py-2.5 rounded-lg font-bold text-sm transition-colors ${
+                    isPoints
+                      ? 'bg-[#18294B] text-white hover:bg-[#0f1d35]'
+                      : 'bg-amber-500 text-white hover:bg-amber-600'
+                  }`}
+                  onClick={(e) => { e.stopPropagation(); handleSelectUnit(unitType); }}
+                >
+                  {isPoints ? 'Redeem Points' : 'Book Now'}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

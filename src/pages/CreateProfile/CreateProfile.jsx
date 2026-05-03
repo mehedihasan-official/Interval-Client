@@ -73,130 +73,130 @@ const CreateProfile = () => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-lg p-6">
-      <h1 className="text-2xl font-semibold text-left text-[#0077BE]">
-        Create A Profile
-      </h1>
-      <p className="mt-4 text-left text-gray-600">
-        To create your Web profile and password, please enter your membership
-        number and the telephone number that matches your membership record.
-      </p>
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-        {/* Member Number */}
-        <div>
-          <label className="block text-left text-gray-700 font-medium mb-2">
-            Member Number
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your membership number"
-            className="w-full input input-bordered input-primary"
-            name="membership"
-            required
-          />
-        </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-gray-100">
+        <h1 className="text-3xl font-bold text-center text-[#0077BE] mb-4">
+          Create A Profile
+        </h1>
+        <p className="text-center text-gray-600 mb-8">
+          To create your Web profile and password, please enter your membership
+          number and the telephone number that matches your membership record.
+        </p>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Member Number */}
+          <div>
+            <label className="block text-left text-gray-700 font-semibold mb-2">
+              Member Number
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your membership number"
+              className="w-full input input-bordered focus:ring-2 focus:ring-blue-500"
+              name="membership"
+              required
+            />
+          </div>
 
-        {/* Telephone */}
-        <div>
-          <label className="block text-left text-gray-700 font-medium mb-2">
-            Telephone
-          </label>
-          <div className="flex gap-5">
-            <div>
-              <label className="block text-left text-gray-700 font-medium mb-2">
-                Area Code
-              </label>
-              <input
-                type="text"
-                className="input input-bordered input-primary w-full"
-                name="areaCode"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-left text-gray-700 font-medium mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                className="input input-bordered input-primary w-full"
-                name="phoneNumber"
-                required
-              />
+          {/* Telephone */}
+          <div>
+            <label className="block text-left text-gray-700 font-semibold mb-2">
+              Telephone
+            </label>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-1">
+                <input
+                  type="text"
+                  placeholder="Area"
+                  className="input input-bordered w-full focus:ring-2 focus:ring-blue-500"
+                  name="areaCode"
+                  required
+                />
+              </div>
+              <div className="col-span-2">
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  className="input input-bordered w-full focus:ring-2 focus:ring-blue-500"
+                  name="phoneNumber"
+                  required
+                />
+              </div>
             </div>
           </div>
+
+          {/* Set UserID */}
+          <div>
+            <label className="block text-left text-gray-700 font-semibold mb-2">
+              Set UserID
+            </label>
+            <input
+              type="text"
+              placeholder="Choose a username"
+              className="w-full input input-bordered focus:ring-2 focus:ring-blue-500"
+              name="userID"
+              required
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-left text-gray-700 font-semibold mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="w-full input input-bordered focus:ring-2 focus:ring-blue-500"
+              name="email"
+              required
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-left text-gray-700 font-semibold mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="Create a strong password"
+              className="w-full input input-bordered focus:ring-2 focus:ring-blue-500"
+              name="password"
+              required
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-[#0077BE] text-white py-3 rounded-lg font-bold hover:bg-[#005a9e] transition-all shadow-md"
+          >
+            Submit
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 my-8">
+          <div className="flex-grow h-px bg-gray-200"></div>
+          <span className="text-gray-400 text-sm font-medium">OR</span>
+          <div className="flex-grow h-px bg-gray-200"></div>
         </div>
 
-        {/* Set UserID */}
-        <div>
-          <label className="block text-left text-gray-700 font-medium mb-2">
-            Set UserID
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your UserID"
-            className="w-full input input-bordered input-primary"
-            name="userID"
-            required
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-left text-gray-700 font-medium mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Enter your Email Address"
-            className="w-full input input-bordered input-primary"
-            name="email"
-            required
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-left text-gray-700 font-medium mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full input input-bordered input-primary"
-            name="password"
-            required
-          />
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="btn btn-primary w-full bg-[#0077BE] hover:bg-[#005a9e] text-white"
-        >
-          Submit
-        </button>
-      </form>
-
-      {/* Divider */}
-      <div className="divider mt-6">OR</div>
-
-      {/* Google Login */}
-      <div className="w-full text-center">
+        {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
-          className="flex items-center justify-center gap-4 text-[#0077BE] border-[2px] w-full py-2 rounded font-semibold hover:bg-blue-700 hover:text-white"
+          className="flex items-center justify-center gap-4 text-gray-700 border-2 border-gray-200 w-full py-3 rounded-lg font-semibold hover:bg-gray-50 transition-all mb-8"
         >
-          <FaGoogle /> Google Login
+          <FaGoogle className="text-red-500" /> Sign up with Google
         </button>
-      </div>
 
-      {/* Already have a Profile */}
-      <div className="mt-6 text-center text-gray-600">
-        <p>Already have a Profile?</p>
-        <Link to="/login">
-          <p className="text-[#0077BE] font-medium hover:underline">Login</p>
-        </Link>
+        {/* Already have a Profile */}
+        <div className="text-center">
+          <p className="text-gray-600 mb-1">Already have a Profile?</p>
+          <Link to="/login" className="text-[#0077BE] font-bold hover:underline">
+            Login
+          </Link>
+        </div>
       </div>
     </div>
   );

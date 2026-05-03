@@ -34,26 +34,26 @@ const Gateways = () => {
         <img src={bannerPhoto} alt="Banner" className="w-full" />
       </div>
 
-      <div className="p-4 w-10/12">
+      <div className="p-4 w-full md:w-11/12 lg:w-10/12 max-w-7xl">
         {/* Title and Subtitle */}
-        <div className="mt-6">
-          <h1 className="text-left text-2xl font-bold text-blue-700 sm:text-3xl">
+        <div className="mt-6 px-2">
+          <h1 className="text-left text-2xl font-bold text-blue-700 sm:text-3xl lg:text-4xl">
             Search Getaways
           </h1>
-          <p className="text-left text-gray-600 font-bold mt-1">
+          <p className="text-left text-gray-600 font-bold mt-1 text-sm sm:text-base">
             Take More Vacations At Irresistibly Low Prices
           </p>
         </div>
 
         {/* Tab Buttons */}
-        <div className="grid grid-cols-2 items-center justify-center mt-6">
+        <div className="flex flex-row items-center justify-center mt-6 px-2">
           {["Getaways", "ShortStay Getaways"].map((tab) => (
             <button
               key={tab}
-              className={`w-full text-xs border-2 py-3 ${
+              className={`flex-1 text-xs sm:text-sm font-bold border-2 py-3 transition-all ${
                 activeTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-500 hover:text-white"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-blue-600 border-blue-600 hover:bg-blue-50"
               } ${tab === "Getaways" ? "rounded-s-md" : "rounded-e-md"}`}
               onClick={() => handleTabClick(tab)}
             >
@@ -64,8 +64,8 @@ const Gateways = () => {
 
         {/* Submenu Section */}
         {activeTab === "Getaways" && (
-          <div className="w-full flex justify-center items-center mt-6 border-b border-gray-300 pb-2">
-            <div className="w-full grid grid-cols-4 border-2">
+          <div className="w-full mt-6 px-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 border-2 border-blue-600 rounded-md overflow-hidden">
               {[
                 "Single Destination",
                 "Search All Destinations",
@@ -74,10 +74,10 @@ const Gateways = () => {
               ].map((menu) => (
                 <button
                   key={menu}
-                  className={`py-2 px-4 font-medium text-xs border-r-2 text-center ${
+                  className={`py-3 px-2 font-medium text-[10px] sm:text-xs text-center border-b md:border-b-0 md:border-r last:border-0 ${
                     activeMenu === menu
-                      ? "bg-blue-500 text-white"
-                      : "text-gray-600 hover:bg-blue-100"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-700 bg-white hover:bg-blue-50"
                   }`}
                   onClick={() => handleMenuClick(menu)}
                 >

@@ -17,8 +17,7 @@ const ResortDirectory = () => {
         "Greece",
         "Caribbean & Atlantic Islands",
         "Peru",
-        "Costa Rica",
-        "Dominican Republic"
+        "Costa Rica"
     ];
 
     const handleCountryClick = (country) => {
@@ -35,17 +34,21 @@ const ResortDirectory = () => {
     };
 
     return (
-        <div>
-            <h1 className="pt-5 pl-2 text-xl font-bold text-[#0077BE]">Resort Directory countries</h1>
-            <div className="py-5">
+        <div className="container mx-auto p-4 md:p-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-[#0077BE] mb-8 border-b pb-4">
+                Resort Directory
+            </h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {countries.map((country, index) => (
                     <div
                         key={index}
                         onClick={() => handleCountryClick(country)}
-                        className="border-t py-2 px-3 hover:bg-slate-300 flex justify-between cursor-pointer"
+                        className="bg-white border rounded-xl p-5 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer flex justify-between items-center group"
                     >
-                        <p>{country}</p>
-                        <IoIosArrowForward className="font-bold text-xl text-orange-500" />
+                        <span className="text-lg font-medium text-gray-700 group-hover:text-blue-600">
+                            {country}
+                        </span>
+                        <IoIosArrowForward className="text-xl text-orange-500 group-hover:translate-x-1 transition-transform" />
                     </div>
                 ))}
             </div>

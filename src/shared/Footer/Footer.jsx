@@ -22,35 +22,35 @@ const Footer = () => {
         </div>
 
         {/* Footer Links */}
-        <div className="text-center mb-6">
-          <ul className="grid grid-cols-2 gap-y-4 gap-x-6 md:flex md:justify-center md:space-x-6 text-sm">
+        <div className="text-center mb-8">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:flex md:justify-center md:flex-wrap md:gap-x-6 gap-y-4 text-sm">
             <li>
-              <a href="/about-us" className="hover:text-gray-400">
+              <a href="/about-us" className="hover:text-blue-600 transition-colors">
                 About Us
               </a>
             </li>
             <li>
-              <a href="/privacy-policy" className="hover:text-gray-400">
+              <a href="/privacy-policy" className="hover:text-blue-600 transition-colors">
                 Privacy & Cookie Policies
               </a>
             </li>
             <li>
-              <a href="/cookie-settings" className="hover:text-gray-400">
+              <a href="/cookie-settings" className="hover:text-blue-600 transition-colors">
                 Cookie Settings
               </a>
             </li>
             <li>
-              <a href="/do-not-sell" className="hover:text-gray-400">
+              <a href="/do-not-sell" className="hover:text-blue-600 transition-colors">
                 Do Not Sell/Share
               </a>
             </li>
             <li>
-              <a href="/legal" className="hover:text-gray-400">
+              <a href="/legal" className="hover:text-blue-600 transition-colors">
                 Legal
               </a>
             </li>
             <li>
-              <a href="/support" className="hover:text-gray-400">
+              <a href="/support" className="hover:text-blue-600 transition-colors">
                 Support
               </a>
             </li>

@@ -71,7 +71,7 @@ const ExchangeGetaways = ({ resort }) => {
                       {u.t}
                     </p>
                     <p className="text-blue-600 font-bold">{u.p}</p>
-                    <p className="text-[10px] text-gray-400">Points</p>
+                    <p className="text-[10px] text-gray-400">Points/Night</p>
                   </div>
                 ))}
               </div>

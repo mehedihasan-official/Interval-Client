@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// Points per stay by unit type based on your provided data
-const getPointsPerStay = (unitType) => {
+// Points per night by unit type based on your provided data
+const getPointsPerNight = (unitType) => {
   switch (unitType) {
     case "Studio":
       return 2000;
@@ -19,8 +19,8 @@ const getPointsPerStay = (unitType) => {
   }
 };
 
-// Cash price by unit type
-const getCashPrice = (unitType) => {
+// Cash price per night by unit type
+const getCashPricePerNight = (unitType) => {
   switch (unitType) {
     case "Studio":
       return 309;
@@ -32,9 +32,17 @@ const getCashPrice = (unitType) => {
 };
 
 // Calculate total points for the stay
-const calculatePoints = (unitType) => {
-  const totalPoints = getPointsPerStay(unitType);
-  return { totalPoints };
+const calculatePoints = (unitType, nights) => {
+  const pointsPerNight = getPointsPerNight(unitType);
+  const totalPoints = pointsPerNight * nights;
+  return { totalPoints, pointsPerNight };
+};
+
+// Calculate total cash price for the stay
+const calculateCashPrice = (unitType, nights) => {
+  const pricePerNight = getCashPricePerNight(unitType);
+  const totalPrice = pricePerNight * nights;
+  return { totalPrice, pricePerNight };
 };
 
 const UNIT_TYPES = ["Studio", "1/1 Bed", "2/2 Bed", "3/3 Bed", "4/4 Bed"];
@@ -86,11 +94,13 @@ const AvailableUnit = () => {
     };
 
     if (isPoints) {
-      const pointsInfo = calculatePoints(unitType);
+      const pointsInfo = calculatePoints(unitType, nights);
       card.points = pointsInfo.totalPoints;
-      card.pointsPerStay = getPointsPerStay(unitType);
+      card.pointsPerNight = pointsInfo.pointsPerNight;
     } else {
-      card.price = getCashPrice(unitType);
+      const cashInfo = calculateCashPrice(unitType, nights);
+      card.price = cashInfo.totalPrice;
+      card.pricePerNight = cashInfo.pricePerNight;
     }
 
     navigate("/checkout", { state: { resort, card, searchParams } });
@@ -181,8 +191,8 @@ const AvailableUnit = () => {
       <h2 className="text-lg font-bold text-gray-800 mb-4">Available Units</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {UNIT_TYPES.map((unitType) => {
-          const pts = isPoints ? calculatePoints(unitType) : null;
-          const cashPrice = !isPoints ? getCashPrice(unitType) : null;
+          const pts = isPoints ? calculatePoints(unitType, nights) : null;
+          const cash = !isPoints ? calculateCashPrice(unitType, nights) : null;
 
           return (
             <div
@@ -213,15 +223,24 @@ const AvailableUnit = () => {
                       </p>
                       <p className="text-xs text-gray-500">total points</p>
                       <div className="mt-2 text-xs text-gray-600 space-y-1 text-center bg-gray-50 rounded p-2">
-                        <p>Redeem for entire {nights} night stay</p>
+                        <p>
+                          {pts.pointsPerNight.toLocaleString()} pts/night ×{" "}
+                          {nights} nights
+                        </p>
                       </div>
                     </>
                   ) : (
                     <>
                       <p className="text-2xl font-bold text-amber-600">
-                        ${cashPrice}
+                        ${cash.totalPrice.toLocaleString()}
                       </p>
-                      <p className="text-xs text-gray-500">+ tax per stay</p>
+                      <p className="text-xs text-gray-500">total price</p>
+                      <div className="mt-2 text-xs text-gray-600 space-y-1 text-center bg-gray-50 rounded p-2">
+                        <p>
+                          ${cash.pricePerNight.toLocaleString()}/night ×{" "}
+                          {nights} nights
+                        </p>
+                      </div>
                     </>
                   )}
                 </div>

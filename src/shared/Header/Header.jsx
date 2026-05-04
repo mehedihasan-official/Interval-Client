@@ -44,6 +44,7 @@ const Header = () => {
   // Pre-login desktop nav tabs (matching the screenshot)
   const preLoginNavTabs = [
     { name: "Why Vacation Ownership?", path: "#" },
+    { name: "Resort Directory", path: "/resort-directory" },
     { name: "Explore & Plan", path: "#" },
     { name: "Membership Benefits", path: "#" },
     { name: "Join Today", path: "#" },

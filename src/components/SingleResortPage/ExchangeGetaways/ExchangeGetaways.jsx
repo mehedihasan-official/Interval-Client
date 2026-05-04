@@ -58,10 +58,10 @@ const ExchangeGetaways = ({ resort }) => {
               <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
                 {[
                   { t: "Studio", p: "2,000" },
-                  { t: "1/1 Bed", p: "3k-4k" },
-                  { t: "2/2 Bed", p: "4k-5k" },
-                  { t: "3/3 Bed", p: "5k-7k" },
-                  { t: "4/4 Bed", p: "8k-12k" },
+                  { t: "1/1 Bed", p: "3000-4000" },
+                  { t: "2/2 Bed", p: "4000-5000" },
+                  { t: "3/3 Bed", p: "5000-7000" },
+                  { t: "4/4 Bed", p: "8000-12000" },
                 ].map((u) => (
                   <div
                     key={u.t}

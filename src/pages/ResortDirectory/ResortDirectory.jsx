@@ -8,6 +8,9 @@ const ResortDirectory = () => {
   const { allResortData, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // Check if data is truly empty even after loading finishes
+  const isDataEmpty = !allResortData || allResortData.length === 0;
+
   // Dynamically extract unique countries from allResortData
   const countries = allResortData
     ? [
@@ -32,7 +35,8 @@ const ResortDirectory = () => {
     }
   };
 
-  if (loading) {
+  // Show loading if context says it's loading OR if data hasn't arrived yet
+  if (loading || isDataEmpty) {
     return <Loading />;
   }
 

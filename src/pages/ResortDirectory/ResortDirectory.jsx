@@ -1,10 +1,11 @@
 import { useContext } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading";
 import { AuthContext } from "../../providers/AuthProvider";
 
 const ResortDirectory = () => {
-  const { allResortData } = useContext(AuthContext);
+  const { allResortData, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // Dynamically extract unique countries from allResortData
@@ -30,6 +31,10 @@ const ResortDirectory = () => {
       navigate(`/resort-page/${encodeURIComponent(country)}`);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto p-4 md:p-8">

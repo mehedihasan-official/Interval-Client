@@ -150,12 +150,12 @@ const SingleResortPage = () => {
                 src={img}
                 alt={`Thumbnail ${index + 1}`}
                 seed={`${resort._id || resort.resortName || ""}-thumb-${index}`}
+                onClick={() => setCurrentImage(index)}
                 className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 cursor-pointer rounded-md border-2 transition-all ${
                   index === currentImage
                     ? "border-blue-500 scale-105"
                     : "border-gray-300 hover:border-blue-300"
                 }`}
-                onClick={() => setCurrentImage(index)}
               />
             ))}
           </div>

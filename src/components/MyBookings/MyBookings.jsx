@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
 import { Link } from 'react-router-dom';
+import ResortImage from '../ResortImage';
 
 const MyBookings = () => {
   const { user, bookingsData } = useContext(AuthContext);
@@ -47,13 +48,12 @@ const MyBookings = () => {
                 <div className="p-4 md:p-5">
                   {/* Resort */}
                   <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                    {booking.resort?.img && (
-                      <img
-                        src={booking.resort.img}
-                        alt={booking.resort.resortName}
-                        className="w-full sm:w-36 h-36 sm:h-28 object-cover rounded-lg flex-shrink-0"
-                      />
-                    )}
+                    <ResortImage
+                      src={booking.resort?.img}
+                      alt={booking.resort?.resortName}
+                      seed={booking.resort?._id || booking.resort?.resortName || ""}
+                      className="w-full sm:w-36 h-36 sm:h-28 rounded-lg flex-shrink-0"
+                    />
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${isPoints ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`}>

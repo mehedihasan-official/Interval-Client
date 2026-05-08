@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import ResortImage from "../ResortImage";
 
 // Points per night by unit type based on your provided data
 const getPointsPerNight = (unitType) => {
@@ -233,10 +234,11 @@ const AvailableUnit = () => {
         <div className="w-full border border-gray-100 rounded-2xl overflow-hidden mb-8 shadow-sm bg-white">
           <div className="flex flex-col sm:flex-row">
             <div className="w-full sm:w-56 h-48 sm:h-auto flex-shrink-0">
-              <img
+              <ResortImage
                 src={resort.img}
                 alt={resort.resortName}
-                className="w-full h-full object-cover"
+                seed={resort._id || resort.resortName || ""}
+                className="w-full h-48 sm:h-full"
               />
             </div>
             <div className="p-6 flex-grow flex flex-col justify-center">

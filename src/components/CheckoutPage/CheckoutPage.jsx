@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
+import ResortImage from "../ResortImage";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -113,10 +114,11 @@ const CheckoutPage = () => {
       {/* Resort & Booking Summary */}
       <div className="bg-white border rounded-xl overflow-hidden shadow-sm mb-6">
         <div className="flex flex-col sm:flex-row">
-          <img
+          <ResortImage
             src={resort.img}
             alt={resort.resortName}
-            className="w-full sm:w-40 h-40 object-cover flex-shrink-0"
+            seed={resort._id || resort.resortName || ""}
+            className="w-full sm:w-40 h-40 flex-shrink-0"
           />
           <div className="p-4 flex-grow">
             <h3 className="text-lg font-bold text-[#18294B]">

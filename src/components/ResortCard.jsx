@@ -1,4 +1,5 @@
 import React from 'react';
+import ResortImage from './ResortImage';
 
 const ResortCard = ({resort}) => {
      return (
@@ -8,10 +9,11 @@ const ResortCard = ({resort}) => {
             className="border p-3 shadow-lg rounded-md overflow-hidden"
           >
             {/* Image */}
-            <img
+            <ResortImage
               src={resort.img}
-              alt={resort.name}
-              className="w-full h-48 object-cover mb-3"
+              alt={resort.resortName || resort.name}
+              seed={resort._id || resort.resortName || ""}
+              className="w-full h-48 mb-3"
             />
             {/* Resort Name */}
             <h2 className="text-lg font-bold">{resort.resortName}</h2>

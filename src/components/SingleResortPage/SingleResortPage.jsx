@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
 import Loading from "../Loading";
+import ResortImage from "../ResortImage";
+import { resolveImage } from "../../utils/resortImages";
 import ExchangeGetaways from "./ExchangeGetaways/ExchangeGetaways";
 import TabContent from "./TabContent/TabContent";
 
@@ -24,12 +26,15 @@ const SingleResortPage = () => {
       setResort(foundResort);
 
       if (foundResort) {
-        // Conditionally include images
-        const images = [foundResort.img, foundResort.img2, foundResort.img3];
-        if (foundResort.img4) {
-          images.push(foundResort.img4);
-        }
-        setImages(images);
+        // Conditionally include images — resolve each to a fallback if empty/broken
+        const seed = foundResort._id || foundResort.resortName || "";
+        const rawImages = [foundResort.img, foundResort.img2, foundResort.img3];
+        if (foundResort.img4) rawImages.push(foundResort.img4);
+        // Filter out nullish slots but keep at least 1 image via resolveImage
+        const resolvedImages = rawImages
+          .filter((_, i) => i === 0 || rawImages[i]) // always keep slot 0
+          .map((url, i) => resolveImage(url, `${seed}-${i}`));
+        setImages(resolvedImages);
       }
     }
   }, [id, allResortData]);
@@ -86,10 +91,11 @@ const SingleResortPage = () => {
       {/* Image Carousel */}
       <div className="my-6">
         <div className="relative group">
-          <img
+          <ResortImage
             src={images[currentImage]}
             alt="Resort"
-            className="w-full h-[300px] md:h-[450px] object-cover rounded-lg shadow-md transition-all duration-500"
+            seed={`${resort._id || resort.resortName || ""}-${currentImage}`}
+            className="w-full h-[300px] md:h-[450px] rounded-lg shadow-md transition-all duration-500"
           />
 
           {/* Navigation Arrows */}
@@ -139,11 +145,12 @@ const SingleResortPage = () => {
           {/* Thumbnails */}
           <div className="flex justify-center gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
             {images.map((img, index) => (
-              <img
+              <ResortImage
                 key={index}
                 src={img}
                 alt={`Thumbnail ${index + 1}`}
-                className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 object-cover cursor-pointer rounded-md border-2 transition-all ${
+                seed={`${resort._id || resort.resortName || ""}-thumb-${index}`}
+                className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 cursor-pointer rounded-md border-2 transition-all ${
                   index === currentImage
                     ? "border-blue-500 scale-105"
                     : "border-gray-300 hover:border-blue-300"

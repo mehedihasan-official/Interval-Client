@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
+import ResortImage from "../../components/ResortImage";
 
 const UsersBookings = () => {
   const { allBookingsData } = useContext(AuthContext);
@@ -39,15 +40,12 @@ const UsersBookings = () => {
             {flattenedBookingsData.map((booking, index) => (
               <tr key={index}>
                 <td>
-                  {booking.resort?.img ? (
-                    <img
-                      src={booking.resort.img}
-                      alt="Resort"
-                      className="w-24 h-24 object-cover"
-                    />
-                  ) : (
-                    <span>No image available</span>
-                  )}
+                  <ResortImage
+                    src={booking.resort?.img}
+                    alt="Resort"
+                    seed={booking.resort?._id || booking.resort?.resortName || String(index)}
+                    className="w-24 h-24 rounded"
+                  />
                 </td>
                 <td>{booking.resort?.name || "Unknown resort"}</td>
                 <td>{booking.date || "No date available"}</td>
@@ -65,15 +63,12 @@ const UsersBookings = () => {
               className="card card-side bg-base-100 shadow-xl p-2 py-3 mb-4"
             >
               <figure>
-                {booking.resort?.img ? (
-                  <img
-                    src={booking.resort.img}
-                    alt="Resort"
-                    className="w-24 h-24 object-cover rounded-md"
-                  />
-                ) : (
-                  <span>No image available</span>
-                )}
+                <ResortImage
+                  src={booking.resort?.img}
+                  alt="Resort"
+                  seed={booking.resort?._id || booking.resort?.resortName || String(index)}
+                  className="w-24 h-24 rounded-md"
+                />
               </figure>
               <div className="pl-10 space-y-1">
                 <h2 className="card-title">

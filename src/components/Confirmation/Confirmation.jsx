@@ -91,9 +91,9 @@ const Confirmation = () => {
         {/* Payment total */}
         <div className={`p-4 border-t ${isPoints ? 'bg-blue-50' : 'bg-green-50'}`}>
           {isPoints ? (
-            <p className="font-bold text-[#18294B]">Points Redeemed: {(amount || card?.points)?.toLocaleString()} Interval Points</p>
+            <p className="font-bold text-[#18294B]">Points Redeemed: {(amount || card?.points || 0).toLocaleString()} Interval Points</p>
           ) : (
-            <p className="font-bold text-green-700">Total Paid: ${typeof amount === 'number' ? amount.toFixed(2) : amount} USD (tax incl.)</p>
+            <p className="font-bold text-green-700">Total Paid: ${Number(amount || card?.price || 0).toFixed(2)} USD (tax incl.)</p>
           )}
         </div>
       </div>

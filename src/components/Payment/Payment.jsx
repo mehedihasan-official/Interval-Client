@@ -94,7 +94,7 @@ const Payment = () => {
       </div>
 
       {/* Booking Summary */}
-      <div className={`mb-6 p-4 rounded-xl border ${isPoints ? 'bg-blue-50 border-blue-200' : 'bg-amber-50 border-amber-200'}`}>
+      <div className={`mb-6 p-4 rounded-xl border ${isPoints ? 'bg-blue-50 border-blue-200' : 'bg-blue-50 border-[#0077be]/20'}`}>
         <h2 className="font-bold text-gray-800 mb-2">Booking Summary</h2>
         <div className="text-sm space-y-1 text-gray-700">
           <p><span className="font-semibold">Resort:</span> {resort.resortName}</p>
@@ -103,7 +103,7 @@ const Payment = () => {
           {isPoints ? (
             <p><span className="font-semibold">Total:</span> <span className="text-[#18294B] font-bold">{card.points?.toLocaleString()} points</span></p>
           ) : (
-            <p><span className="font-semibold">Total:</span> <span className="text-amber-600 font-bold">${taxInclusivePrice?.toFixed(2)} USD (tax incl.)</span></p>
+            <p><span className="font-semibold">Total:</span> <span className="text-[#0077be] font-bold">${taxInclusivePrice?.toFixed(2)} USD (tax incl.)</span></p>
           )}
         </div>
       </div>
@@ -112,7 +112,10 @@ const Payment = () => {
         {/* Card details for cash payment only */}
         {!isPoints && (
           <div className="bg-white border rounded-xl p-4 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">💳 Card Details</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <span className="p-1.5 bg-[#0077be] rounded text-white text-xs">💳</span>
+              Card Details
+            </h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
@@ -120,7 +123,7 @@ const Payment = () => {
                   type="text"
                   value={cardNumber}
                   onChange={e => setCardNumber(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm"
+                  className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#0077be]/30 focus:outline-none text-sm transition-all"
                   placeholder="1234 5678 9012 3456"
                   maxLength="19"
                   required
@@ -133,7 +136,7 @@ const Payment = () => {
                     type="text"
                     value={expiryDate}
                     onChange={e => setExpiryDate(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm"
+                    className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#0077be]/30 focus:outline-none text-sm transition-all"
                     placeholder="MM/YY"
                     required
                   />
@@ -144,7 +147,7 @@ const Payment = () => {
                     type="text"
                     value={cvv}
                     onChange={e => setCvv(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm"
+                    className="w-full border rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#0077be]/30 focus:outline-none text-sm transition-all"
                     placeholder="123"
                     maxLength="4"
                     required
@@ -168,7 +171,10 @@ const Payment = () => {
 
         {/* Billing Information */}
         <div className="bg-white border rounded-xl p-4 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">📋 Billing Information</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="p-1.5 bg-gray-100 rounded text-xs">📋</span>
+            Billing Information
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { name: 'firstName', placeholder: 'First Name', required: true },
@@ -188,7 +194,7 @@ const Payment = () => {
                 placeholder={field.placeholder}
                 value={billingInfo[field.name]}
                 onChange={handleBillingChange}
-                className="w-full border rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-200 focus:outline-none"
+                className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:outline-none transition-all ${isPoints ? 'focus:ring-[#18294B]/30' : 'focus:ring-[#0077be]/30'}`}
                 required={field.required}
               />
             ))}
@@ -202,16 +208,16 @@ const Payment = () => {
             {isPoints ? (
               <p className="text-xl font-bold text-[#18294B]">{card.points?.toLocaleString()} points</p>
             ) : (
-              <p className="text-xl font-bold text-amber-600">${taxInclusivePrice?.toFixed(2)} USD</p>
+              <p className="text-xl font-bold text-[#0077be]">${taxInclusivePrice?.toFixed(2)} USD</p>
             )}
           </div>
           <button
             type="submit"
             disabled={loading}
-            className={`w-full sm:w-auto px-10 py-3 rounded-xl font-bold text-white transition-colors ${
+            className={`w-full sm:w-auto px-10 py-3 rounded-xl font-bold text-white transition-colors shadow-sm hover:shadow-md ${
               isPoints
                 ? 'bg-[#18294B] hover:bg-[#0f1d35] disabled:bg-gray-300'
-                : 'bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300'
+                : 'bg-[#0077be] hover:bg-[#005a8e] disabled:bg-gray-300'
             }`}
           >
             {loading ? 'Processing...' : isPoints ? 'Confirm Redemption' : 'Confirm Payment'}

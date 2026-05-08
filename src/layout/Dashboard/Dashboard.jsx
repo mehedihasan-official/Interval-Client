@@ -33,7 +33,10 @@ const Dashboard = () => {
       {/* Header */}
       <header className="fixed top-0 w-full bg-[#18294B] text-white py-4 px-4 md:px-8 z-50 flex justify-between items-center shadow-lg">
         <div className="flex items-center gap-4">
-          <button className="md:hidden text-white" onClick={toggleSidebar}>
+          <button 
+            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg"
+            onClick={toggleSidebar}
+          >
             <svg
               className="w-6 h-6"
               fill="none"

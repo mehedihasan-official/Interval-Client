@@ -379,35 +379,40 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (email) {
-      fetchUserByEmail(email);
-      setUserRole(email);
-    }
-  }, [email]);
+    const loadInitialData = async () => {
+      await Promise.all([
+        fetchAllResorts(),
+        fetchAllUsers(),
+        fetchAllBookingsData(),
+      ]);
+    };
+    loadInitialData();
 
-  useEffect(() => {}, [role]);
-
-  useEffect(() => {
-    fetchAllResorts();
-    fetchAllUsers();
-    fetchAllBookingsData();
-    if (email) {
-      fetchUserByEmail(email);
-      setUserRole(email);
-      fetchBookingsData(email);
-      fetchPaymentInformation(email);
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser?.email) {
         setEmail(currentUser.email);
-        setUserRole(currentUser.email);
+        await Promise.all([
+          setUserRole(currentUser.email),
+          fetchUserByEmail(currentUser.email),
+          fetchBookingsData(currentUser.email),
+          fetchPaymentInformation(currentUser.email),
+        ]);
+      } else {
+        setEmail(null);
+        setRole(null);
       }
       setLoading(false);
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (email) {
+      setUserRole(email);
+      fetchUserByEmail(email);
+    }
   }, [email]);
 
   const authInfo = {

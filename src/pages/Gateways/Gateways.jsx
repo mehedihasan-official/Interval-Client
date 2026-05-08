@@ -99,12 +99,16 @@ const Gateways = () => {
 
         {/* Additional Links */}
         <div className="w-full mt-10">
-          {["Top Getaway Deals", "Best Price Guarantee"].map((item) => (
+          {[
+            { label: "Top Getaway Deals", path: "/dashboard/gateways" },
+            { label: "Best Price Guarantee", path: "/dashboard/gateways" }
+          ].map((item) => (
             <Link
-              key={item}
+              key={item.label}
+              to={item.path}
               className="flex border-t-2 p-3 font-semibold text-gray-600 hover:bg-blue-100 items-center justify-between"
             >
-              <h1>{item}</h1>
+              <h1>{item.label}</h1>
               <IoIosArrowForward className="text-yellow-600 font-bold text-xl" />
             </Link>
           ))}

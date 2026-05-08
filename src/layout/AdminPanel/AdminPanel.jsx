@@ -41,7 +41,7 @@ const AdminPanel = () => {
   ];
 
   const sharedLinks = [
-    { path: "/dashboard/gateways", label: "Home", icon: <FaHome /> },
+    { path: "/dashboard/gateways", label: "Home", icon: <HiOutlineHomeModern /> },
     { path: "/resort-directory", label: "Resort Directory", icon: <TbBeach /> },
   ];
 

@@ -194,7 +194,7 @@ const Header = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-white shadow-2xl z-[70] transform transition-transform duration-300 lg:hidden ${
+        className={`fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-white shadow-2xl z-[70] transform transition-transform duration-300 md:hidden ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

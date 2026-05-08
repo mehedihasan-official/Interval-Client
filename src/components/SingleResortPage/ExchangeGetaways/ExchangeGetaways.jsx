@@ -48,7 +48,7 @@ const ExchangeGetaways = ({ resort }) => {
       <div className="bg-white p-4 md:p-6 rounded-lg border shadow-sm">
         {isExchange && (
           <div>
-            {/* Points and Cash Summary */}
+            {/* Points Summary */}
             <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
               <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
                 <svg
@@ -58,60 +58,33 @@ const ExchangeGetaways = ({ resort }) => {
                 >
                   <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 11V5h2v6H9zm0 4v-2h2v2H9z" />
                 </svg>
-                Nightly Rate Reference
+                Points Nightly Rate Reference
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Points Summary */}
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-blue-600 font-bold mb-2">
-                    Points / Night
-                  </p>
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    {[
-                      { t: "Studio", p: "2,000" },
-                      { t: "1/1 Bed", p: "3k-4k" },
-                      { t: "2/2 Bed", p: "4k-5k" },
-                      { t: "3/3 Bed", p: "5k-7k" },
-                      { t: "4/4 Bed", p: "8k-12k" },
-                    ].map((u) => (
-                      <div
-                        key={u.t}
-                        className="flex justify-between border-b border-blue-100 pb-1"
-                      >
-                        <span className="text-gray-600">{u.t}</span>
-                        <span className="font-bold text-blue-700">{u.p}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Cash Summary */}
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-amber-600 font-bold mb-2">
-                    Cash / Night
-                  </p>
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    {[
-                      { t: "Studio", p: "$50" },
-                      { t: "1/1 Bed", p: "$60" },
-                      { t: "2/2 Bed", p: "$72" },
-                      { t: "3/3 Bed", p: "$80" },
-                      { t: "4/4 Bed", p: "$100" },
-                    ].map((u) => (
-                      <div
-                        key={u.t}
-                        className="flex justify-between border-b border-amber-100 pb-1"
-                      >
-                        <span className="text-gray-600">{u.t}</span>
-                        <span className="font-bold text-amber-700">{u.p}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="max-w-md">
+                <p className="text-[10px] uppercase tracking-wider text-blue-600 font-bold mb-2">
+                  Points / Night
+                </p>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-[11px]">
+                  {[
+                    { t: "Studio", p: "2,000" },
+                    { t: "1/1 Bed", p: "3k-4k" },
+                    { t: "2/2 Bed", p: "4k-5k" },
+                    { t: "3/3 Bed", p: "5k-7k" },
+                    { t: "4/4 Bed", p: "8k-12k" },
+                  ].map((u) => (
+                    <div
+                      key={u.t}
+                      className="flex justify-between border-b border-blue-100 pb-1"
+                    >
+                      <span className="text-gray-600">{u.t}</span>
+                      <span className="font-bold text-blue-700">{u.p}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-3 italic text-center">
-                * Final amount will be calculated based on the total number of
+              <p className="text-[10px] text-gray-500 mt-3 italic">
+                * Final points will be calculated based on the total number of
                 nights selected.
               </p>
             </div>
@@ -196,9 +169,11 @@ const ExchangeGetaways = ({ resort }) => {
               </p>
               <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
                 {[
-                  { t: "Studio", p: "$309" },
-                  { t: "1 Bedroom", p: "$339" },
-                  { t: "2+ Bedroom", p: "$379" },
+                  { t: "Studio", p: "$50" },
+                  { t: "1 Bedroom", p: "$60" },
+                  { t: "2/2 Bed", p: "$72" },
+                  { t: "3/3 Bed", p: "$80" },
+                  { t: "4/4 Bed", p: "$100" },
                 ].map((u) => (
                   <div
                     key={u.t}

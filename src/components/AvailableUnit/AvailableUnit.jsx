@@ -23,11 +23,17 @@ const getPointsPerNight = (unitType) => {
 const getCashPricePerNight = (unitType) => {
   switch (unitType) {
     case "Studio":
-      return 309;
+      return 50;
     case "1/1 Bed":
-      return 339;
+      return 60;
+    case "2/2 Bed":
+      return 72;
+    case "3/3 Bed":
+      return 80;
+    case "4/4 Bed":
+      return 100;
     default:
-      return 379; // 2/2, 3/3, 4/4
+      return 50;
   }
 };
 

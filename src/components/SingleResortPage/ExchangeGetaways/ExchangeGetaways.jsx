@@ -38,10 +38,10 @@ const ExchangeGetaways = ({ resort }) => {
           Exchange <span className="text-xs opacity-75">(Points)</span>
         </button>
         <button
-          className={`px-6 py-2.5 font-semibold text-sm transition-all rounded-r-md border-2 border-l-0 ${isGetaways ? "bg-amber-500 text-white border-amber-500" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
+          className={`px-6 py-2.5 font-semibold text-sm transition-all rounded-r-md border-2 border-l-0 ${isGetaways ? "bg-[#0077be] text-white border-[#0077be]" : "border-gray-300 text-gray-700 hover:bg-gray-50"}`}
           onClick={() => setActiveTab("Getaways")}
         >
-          Getaways <span className="text-xs opacity-75">(Cash)</span>
+          Getaways <span className="text-xs ">(Cash)</span>
         </button>
       </div>
 
@@ -49,43 +49,32 @@ const ExchangeGetaways = ({ resort }) => {
         {isExchange && (
           <div>
             {/* Points Summary */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-              <h3 className="text-sm font-bold text-blue-800 mb-3 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 11V5h2v6H9zm0 4v-2h2v2H9z" />
-                </svg>
-                Points Nightly Rate Reference
-              </h3>
-
-              <div className="max-w-md">
-                <p className="text-[10px] uppercase tracking-wider text-blue-600 font-bold mb-2">
-                  Points / Night
-                </p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-[11px]">
-                  {[
-                    { t: "Studio", p: "2,000" },
-                    { t: "1/1 Bed", p: "3k-4k" },
-                    { t: "2/2 Bed", p: "4k-5k" },
-                    { t: "3/3 Bed", p: "5k-7k" },
-                    { t: "4/4 Bed", p: "8k-12k" },
-                  ].map((u) => (
-                    <div
-                      key={u.t}
-                      className="flex justify-between border-b border-blue-100 pb-1"
-                    >
-                      <span className="text-gray-600">{u.t}</span>
-                      <span className="font-bold text-blue-700">{u.p}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="mb-5 p-4 bg-[#18294B] border border-[#18294B] rounded-lg">
+              <h2 className="text-lg font-bold text-white mb-1">
+                Exchange Vacation (Points)
+              </h2>
+              <p className="text-sm text-gray-200">
+                Book with points at our competitive rates.
+              </p>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                {[
+                  { t: "Studio", p: "2,000" },
+                  { t: "1/1 Bed", p: "3000-4000" },
+                  { t: "2/2 Bed", p: "4000-5000" }, 
+                  { t: "3/3 Bed", p: "5000-7000" },
+                  { t: "4/4 Bed", p: "8000-12000" },
+                ].map((u) => (
+                  <div
+                    key={u.t}
+                    className="bg-white border border-[#18294B] rounded p-2 text-center"
+                  >
+                    <p className="font-semibold text-[#18294B]">{u.t}</p>
+                    <p className="text-[#18294B] font-bold">{u.p}</p>
+                  </div>
+                ))}
               </div>
-              <p className="text-[10px] text-gray-500 mt-3 italic">
-                * Final points will be calculated based on the total number of
-                nights selected.
+              <p className="text-xs text-gray-200 mt-2">
+                * Final points will be calculated based on the total number of nights selected.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -160,11 +149,11 @@ const ExchangeGetaways = ({ resort }) => {
 
         {isGetaways && (
           <div>
-            <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <h2 className="text-lg font-bold text-[#18294B] mb-1">
+            <div className="mb-5 p-4 bg-[#0077be] border border-[#0077be] rounded-lg">
+              <h2 className="text-lg font-bold text-white mb-1">
                 Getaway Vacation (Cash)
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-200">
                 Book with cash at our competitive Last Call rates.
               </p>
               <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
@@ -177,14 +166,14 @@ const ExchangeGetaways = ({ resort }) => {
                 ].map((u) => (
                   <div
                     key={u.t}
-                    className="bg-white border border-amber-100 rounded p-2 text-center"
+                    className="bg-white border border-[#0077be] rounded p-2 text-center"
                   >
-                    <p className="font-semibold text-gray-700">{u.t}</p>
-                    <p className="text-amber-600 font-bold">{u.p}</p>
+                    <p className="font-semibold text-[#0077be]">{u.t}</p>
+                    <p className="text-[#0077be] font-bold">{u.p}</p>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-200 mt-2">
                 * Prices shown before tax
               </p>
             </div>
@@ -195,7 +184,7 @@ const ExchangeGetaways = ({ resort }) => {
                 </label>
                 <input
                   type="date"
-                  className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm"
+                  className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-[#0077be] focus:outline-none text-sm"
                   value={earliestDate}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => setEarliestDate(e.target.value)}
@@ -207,7 +196,7 @@ const ExchangeGetaways = ({ resort }) => {
                 </label>
                 <input
                   type="date"
-                  className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-amber-300 focus:outline-none text-sm"
+                  className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-[#0077be] focus:outline-none text-sm"
                   value={latestDate}
                   min={earliestDate || new Date().toISOString().split("T")[0]}
                   onChange={(e) => setLatestDate(e.target.value)}
@@ -218,6 +207,9 @@ const ExchangeGetaways = ({ resort }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
               <div>
                 <label className="block text-gray-700 font-medium mb-1 text-sm">
+                  Adults
+                  className="text-white"
+                >
                   Adults
                 </label>
                 <select
@@ -233,7 +225,7 @@ const ExchangeGetaways = ({ resort }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-700 font-medium mb-1 text-sm">
+                <label className="block text-white font-medium mb-1 text-sm"> 
                   Children
                 </label>
                 <select
@@ -250,7 +242,7 @@ const ExchangeGetaways = ({ resort }) => {
               </div>
             </div>
             <button
-              className="w-full bg-amber-500 text-white font-bold py-3 rounded-lg hover:bg-amber-600 transition-colors"
+              className="w-full bg-[#0077be] text-white font-bold py-3 rounded-lg hover:bg-[#005fa3] transition-colors"
               onClick={handleSearch}
             >
               Search Available Units (Cash)

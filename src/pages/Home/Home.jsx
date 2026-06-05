@@ -23,7 +23,7 @@ const Home = () => {
     <div className="">
       {!user && (
         <>
-          <Carousel >
+          <Carousel />,
           <Content />
         </>
       )}

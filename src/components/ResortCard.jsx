@@ -1,7 +1,7 @@
-import React from 'react';
 import ResortImage from './ResortImage';
 
 const ResortCard = ({resort}) => {
+
      return (
           <div>
                <div

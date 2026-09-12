@@ -15,8 +15,6 @@ const SingleResortPage = () => {
   const [resort, setResort] = useState(null);
   const [currentImage, setCurrentImage] = useState(0); // For image carousel
   const [activeTab, setActiveTab] = useState("description"); // For tab navigation
-
-  // Declare images before useEffect
   const [images, setImages] = useState([]);
 
   useEffect(() => {
@@ -26,26 +24,53 @@ const SingleResortPage = () => {
       setResort(foundResort);
 
       if (foundResort) {
-        // Conditionally include images — resolve each to a fallback if empty/broken
         const seed = foundResort._id || foundResort.resortName || "";
-        const rawImages = [foundResort.img, foundResort.img2, foundResort.img3];
-        if (foundResort.img4) rawImages.push(foundResort.img4);
-        // Filter out nullish slots but keep at least 1 image via resolveImage
-        const resolvedImages = rawImages
-          .filter((_, i) => i === 0 || rawImages[i]) // always keep slot 0
-          .map((url, i) => resolveImage(url, `${seed}-${i}`));
+
+        // Collect every populated image field, in order. Simple and
+        // explicit — no clever filtering that can accidentally drop or
+        // keep the wrong slot.
+        const rawImages = [
+          foundResort.img,
+          foundResort.img2,
+          foundResort.img3,
+          foundResort.img4,
+        ].filter((url) => typeof url === "string" && url.trim().length > 0);
+
+        // If the resort has zero real photos, still show one image (a
+        // resolved fallback) so the carousel always has something to
+        // render instead of an empty array.
+        const resolvedImages =
+          rawImages.length > 0
+            ? rawImages.map((url, i) => resolveImage(url, `${seed}-${i}`))
+            : [resolveImage(undefined, seed)];
+
         setImages(resolvedImages);
+        setCurrentImage(0); // reset to the first photo whenever the resort changes
+      } else {
+        setImages([]);
       }
     }
   }, [id, allResortData]);
 
-  // Carousel Auto-Change Logic
+  // Carousel auto-advance — only runs when there's more than one photo
+  // to rotate through, and always cleans up its interval.
   useEffect(() => {
+    if (images.length <= 1) return undefined;
+
     const interval = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length);
     }, 5000); // Change image every 5 seconds
-    return () => clearInterval(interval); // Cleanup
+
+    return () => clearInterval(interval);
   }, [images]);
+
+  const goToPrevious = () => {
+    setCurrentImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentImage((prev) => (prev + 1) % images.length);
+  };
 
   if (loading) {
     return <Loading />; // Show the Loading component while data is being fetched
@@ -93,62 +118,80 @@ const SingleResortPage = () => {
         <div className="relative group">
           <ResortImage
             src={images[currentImage]}
-            alt="Resort"
+            alt={resortName || "Resort"}
             seed={`${resort._id || resort.resortName || ""}-${currentImage}`}
             className="w-full h-[300px] md:h-[450px] rounded-lg shadow-md transition-all duration-500"
           />
 
-          {/* Navigation Arrows */}
-          <button
-            onClick={() =>
-              setCurrentImage((prev) =>
-                prev === 0 ? images.length - 1 : prev - 1,
-              )
-            }
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() =>
-              setCurrentImage((prev) => (prev + 1) % images.length)
-            }
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+          {/* Navigation arrows — only shown when there's more than one photo */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={goToPrevious}
+                aria-label="Previous photo"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={goToNext}
+                aria-label="Next photo"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
 
-          {/* Thumbnails */}
+              {/* Dot indicators */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImage(index)}
+                    aria-label={`Go to photo ${index + 1}`}
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      index === currentImage
+                        ? "bg-white scale-110"
+                        : "bg-white/50 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Thumbnails — only shown when there's more than one photo */}
+        {images.length > 1 && (
           <div className="flex justify-center gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
             {images.map((img, index) => (
               <ResortImage
                 key={index}
                 src={img}
-                alt={`Thumbnail ${index + 1}`}
+                alt={`${resortName || "Resort"} photo ${index + 1}`}
                 seed={`${resort._id || resort.resortName || ""}-thumb-${index}`}
                 onClick={() => setCurrentImage(index)}
                 className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 cursor-pointer rounded-md border-2 transition-all ${
@@ -159,7 +202,7 @@ const SingleResortPage = () => {
               />
             ))}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Resort Info */}

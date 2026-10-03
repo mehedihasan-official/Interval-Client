@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react"; // SLOW-MODE (remove later)
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { AuthContext } from "../../providers/AuthProvider";
+import { runSlowModeAction } from "../../utils/slowMode.jsx"; // SLOW-MODE (remove later)
 
 const ResortNameOrCode = () => {
   const { allResortData } = useContext(AuthContext);
@@ -36,7 +37,9 @@ const ResortNameOrCode = () => {
     if (filteredResorts.length === 0) {
       alert("No matching resorts found.");
     } else {
-      navigate("/search", { state: { results: filteredResorts } });
+      runSlowModeAction("search", () => // SLOW-MODE (remove later)
+        navigate("/search", { state: { results: filteredResorts } }) // SLOW-MODE (remove later)
+      ); // SLOW-MODE (remove later)
     }
   };
 

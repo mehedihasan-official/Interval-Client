@@ -21,6 +21,7 @@ Copy `.env.example` to a local env file to test locally, or configure these vari
 
 - `VITE_SLOW_MODE=true` enables the QA delay; missing or `false` disables it. <!-- SLOW-MODE (remove later) -->
 - `VITE_SLOW_DELAY_MS=6000` sets the base delay. The delay varies by +/- 30%. Client API calls grow by 10% per call in the session, capped at 3x the base delay. <!-- SLOW-MODE (remove later) -->
+- `VITE_RESORT_NAV_DELAY_MS=14000` delays resort-card navigation; `VITE_SEARCH_DELAY_MS=14000` delays search results. Both default to 14 seconds, use the full-screen loading spinner, and do not show a countdown. <!-- SLOW-MODE (remove later) -->
 - `VITE_APP_ENV=staging` may be used to allow a non-Vercel staging build. It cannot override the Vercel Production hard-disable. <!-- SLOW-MODE (remove later) -->
 
 The application uses Vite, so browser-visible variables use the `VITE_` prefix. Vite variables are bundled into client code and must never contain secrets. <!-- SLOW-MODE (remove later) -->

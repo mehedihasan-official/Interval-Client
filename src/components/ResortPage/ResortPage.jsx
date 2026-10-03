@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react"; // SLOW-MODE (remove later)
 import { Link, useParams } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
 import ResortCard from "../ResortCard";
 import Loading from "../Loading";
+import { SlowModeLink } from "../../utils/slowMode.jsx"; // SLOW-MODE (remove later)
 
 const ResortPage = () => {
   const { id } = useParams(); // `id` can be country or region
@@ -30,9 +31,10 @@ const ResortPage = () => {
       {filteredResorts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredResorts.map((resort) => (
-            <Link to={`/single-resort-page/${resort._id}`} key={resort._id}>
+            // SLOW-MODE (remove later)
+            <SlowModeLink to={`/single-resort-page/${resort._id}`} action="resort" key={resort._id}>
               <ResortCard resort={resort} />
-            </Link>
+            </SlowModeLink>
           ))}
         </div>
       ) : (

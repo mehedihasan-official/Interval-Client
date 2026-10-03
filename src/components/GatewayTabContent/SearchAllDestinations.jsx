@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react"; // SLOW-MODE (remove later)
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
+import { runSlowModeAction } from "../../utils/slowMode.jsx"; // SLOW-MODE (remove later)
 
 const SearchAllDestinations = () => {
   const { allResortData } = useContext(AuthContext);
@@ -131,19 +132,21 @@ const SearchAllDestinations = () => {
   };
 
   // Handle suggestion selection
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = (suggestion) => { // SLOW-MODE (remove later)
     setDestinationInput(suggestion);
     setShowSuggestions(false);
     // Trigger search immediately when suggestion is clicked
     const filteredResorts = performSearch(suggestion, allResortData);
-    navigate("/search", { 
-      state: { results: filteredResorts },
-      search: `?q=${encodeURIComponent(suggestion)}`
-    });
+    runSlowModeAction("search", () => // SLOW-MODE (remove later)
+      navigate("/search", { // SLOW-MODE (remove later)
+        state: { results: filteredResorts }, // SLOW-MODE (remove later)
+        search: `?q=${encodeURIComponent(suggestion)}` // SLOW-MODE (remove later)
+      }) // SLOW-MODE (remove later)
+    ); // SLOW-MODE (remove later)
   };
 
   // Handle search functionality
-  const handleSearch = () => {
+  const handleSearch = () => { // SLOW-MODE (remove later)
     if (!destinationInput.trim()) {
       alert("Please enter a destination.");
       return;
@@ -154,10 +157,12 @@ const SearchAllDestinations = () => {
     if (filteredResorts.length === 0) {
       alert("No matching destinations found.");
     } else {
-      navigate("/search", { 
-        state: { results: filteredResorts },
-        search: `?q=${encodeURIComponent(destinationInput)}`
-      });
+      runSlowModeAction("search", () => // SLOW-MODE (remove later)
+        navigate("/search", { // SLOW-MODE (remove later)
+          state: { results: filteredResorts }, // SLOW-MODE (remove later)
+          search: `?q=${encodeURIComponent(destinationInput)}` // SLOW-MODE (remove later)
+        }) // SLOW-MODE (remove later)
+      ); // SLOW-MODE (remove later)
     }
   };
 

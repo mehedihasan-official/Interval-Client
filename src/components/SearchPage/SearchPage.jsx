@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation to access passed state
+import { useState } from 'react'; // SLOW-MODE (remove later)
+import { useLocation } from 'react-router-dom'; // Import useLocation to access passed state
 import ResortCard from '../ResortCard';
+import { SlowModeLink } from "../../utils/slowMode.jsx"; // SLOW-MODE (remove later)
 
 const SearchPage = () => {
   const location = useLocation();
@@ -34,9 +35,10 @@ const SearchPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentResorts.map((resort) => (
               <div key={resort._id} className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <Link to={`/single-resort-page/${resort._id}`}>
+                {/* SLOW-MODE (remove later) */}
+                <SlowModeLink to={`/single-resort-page/${resort._id}`} action="resort">
                   <ResortCard resort={resort} />
-                </Link>
+                </SlowModeLink>
               </div>
             ))}
           </div>

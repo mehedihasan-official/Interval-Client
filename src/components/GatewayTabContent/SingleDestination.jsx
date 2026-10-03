@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react"; // SLOW-MODE (remove later)
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
+import { runSlowModeAction } from "../../utils/slowMode.jsx"; // SLOW-MODE (remove later)
 
 const SingleDestination = () => {
   const { allResortData } = useContext(AuthContext);
@@ -40,7 +41,7 @@ const SingleDestination = () => {
     });
   };
 
-  const handleSearch = () => {
+  const handleSearch = () => { // SLOW-MODE (remove later)
     if (!destinationInput.trim()) {
       alert("Please enter a destination");
       return;
@@ -48,12 +49,14 @@ const SingleDestination = () => {
 
     const filteredResorts = performSearch(destinationInput, allResortData || []);
 
-    navigate("/search", { 
-      state: { results: filteredResorts },
-      search: `?q=${encodeURIComponent(destinationInput)}` +
-              `${earliestDate ? `&from=${earliestDate}` : ''}` +
-              `${latestDate ? `&to=${latestDate}` : ''}`
-    });
+    runSlowModeAction("search", () => // SLOW-MODE (remove later)
+      navigate("/search", { // SLOW-MODE (remove later)
+        state: { results: filteredResorts }, // SLOW-MODE (remove later)
+        search: `?q=${encodeURIComponent(destinationInput)}` + // SLOW-MODE (remove later)
+                `${earliestDate ? `&from=${earliestDate}` : ''}` + // SLOW-MODE (remove later)
+                `${latestDate ? `&to=${latestDate}` : ''}` // SLOW-MODE (remove later)
+      }) // SLOW-MODE (remove later)
+    ); // SLOW-MODE (remove later)
   };
 
   // Handle Enter key press

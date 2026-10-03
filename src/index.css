@@ -7,6 +7,96 @@
 @import "~slick-carousel/slick/slick-theme.css";
 
 
+:root {
+  color-scheme: light;
+  --app-background: #ffffff;
+  --app-foreground: #1f2933;
+}
+
+html,
+body {
+  min-height: 100%;
+  background-color: var(--app-background);
+  color: var(--app-foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --app-background: #111819;
+    --app-foreground: #e6eceb;
+  }
+
+  [class~="bg-white"] {
+    background-color: #202a2b;
+  }
+
+  [class~="bg-gray-50"],
+  [class~="bg-gray-100"] {
+    background-color: #172021;
+  }
+
+  [class~="bg-gray-200"] {
+    background-color: #303b3c;
+  }
+
+  [class~="bg-blue-50"],
+  [class~="bg-blue-100"] {
+    background-color: #26383b;
+  }
+
+  [class~="text-black"],
+  [class~="text-gray-900"],
+  [class~="text-gray-800"] {
+    color: #f0f4f3;
+  }
+
+  [class~="text-gray-700"] {
+    color: #d5dfdd;
+  }
+
+  [class~="text-gray-600"] {
+    color: #c0ccca;
+  }
+
+  [class~="text-gray-500"] {
+    color: #a8b7b5;
+  }
+
+  [class~="text-gray-400"] {
+    color: #98aaa8;
+  }
+
+  [class~="text-[#18294B]"],
+  [class~="hover:text-[#18294B]"] {
+    color: #e6eceb;
+  }
+
+  [class~="text-[#0077be]"],
+  [class~="text-[#0077BE]"],
+  [class~="text-[#006AA7]"],
+  [class~="text-[#1a6fa8]"] {
+    color: #8acfff;
+  }
+
+  [class~="border-gray-100"],
+  [class~="border-gray-200"],
+  [class~="border-gray-300"] {
+    border-color: #3a4748;
+  }
+
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #98aaa8;
+  }
+}
+
 
 /* add the code bellow */ 
 .no-scrollbar {

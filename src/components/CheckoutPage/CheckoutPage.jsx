@@ -117,7 +117,6 @@ const CheckoutPage = () => {
           <ResortImage
             src={resort.img}
             alt={resort.resortName}
-            seed={resort._id || resort.resortName || ""}
             className="w-full sm:w-40 h-40 flex-shrink-0"
           />
           <div className="p-4 flex-grow">

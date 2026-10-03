@@ -237,7 +237,6 @@ const AvailableUnit = () => {
               <ResortImage
                 src={resort.img}
                 alt={resort.resortName}
-                seed={resort._id || resort.resortName || ""}
                 className="w-full h-48 sm:h-full"
               />
             </div>

@@ -1,41 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { getFallbackImage, resolveImage } from "../utils/resortImages";
+import { useState, useEffect } from "react";
 
 /**
- * ResortImage — a drop-in <img> replacement that:
- *  1. Shows a skeleton placeholder while the image loads.
- *  2. Replaces broken / empty URLs with a deterministic fallback from
- *     the RESORT_FALLBACK_IMAGES collection.
- *  3. Re-syncs correctly when the src prop changes (e.g. carousel navigation).
+ * ResortImage — a drop-in <img> replacement that shows a skeleton while the
+ * image loads and leaves failed image URLs visible as broken images.
  *
  * Props:
  *  @param {string}   src        - Original image URL from the database
  *  @param {string}   alt        - Alt text
- *  @param {string}   seed       - Seed for consistent fallback selection (use resort._id or resortName)
  *  @param {string}   className  - Tailwind / CSS classes forwarded to the wrapper div
  *  @param {function} onClick    - Click handler forwarded to the wrapper div (for thumbnails etc.)
  *  @param {object}   rest       - Any other props forwarded to <img>
  */
-const ResortImage = ({ src, alt = "Resort", seed = "", className = "", onClick, ...rest }) => {
-  const [imgSrc, setImgSrc] = useState(() => resolveImage(src, seed));
+const ResortImage = ({ src, alt = "Resort", className = "", onClick, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
-  const [errored, setErrored] = useState(false);
+  const [errored, setErrored] = useState(!src);
 
-  // Re-sync whenever the src prop changes (carousel switching images)
+  // Reset the loading state whenever the src prop changes.
   useEffect(() => {
-    setImgSrc(resolveImage(src, seed));
+    setErrored(!src);
     setLoaded(false);
-    setErrored(false);
-  }, [src, seed]);
+  }, [src]);
 
   const handleError = () => {
-    if (!errored) {
-      setErrored(true);
-      const fallback = getFallbackImage(seed);
-      if (imgSrc !== fallback) {
-        setImgSrc(fallback);
-      }
-    }
+    setErrored(true);
   };
 
   const handleLoad = () => {
@@ -49,15 +36,15 @@ const ResortImage = ({ src, alt = "Resort", seed = "", className = "", onClick, 
       onClick={onClick}
     >
       {/* Skeleton shimmer shown while image is loading */}
-      {!loaded && (
+      {!loaded && !errored && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse z-10" />
       )}
       <img
-        src={imgSrc}
+        src={src || undefined}
         alt={alt}
         onError={handleError}
         onLoad={handleLoad}
-        className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${loaded || errored ? "opacity-100" : "opacity-0"}`}
         {...rest}
       />
     </div>

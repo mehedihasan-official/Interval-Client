@@ -51,7 +51,6 @@ const MyBookings = () => {
                     <ResortImage
                       src={booking.resort?.img}
                       alt={booking.resort?.resortName}
-                      seed={booking.resort?._id || booking.resort?.resortName || ""}
                       className="w-full sm:w-36 h-36 sm:h-28 rounded-lg flex-shrink-0"
                     />
                     <div>

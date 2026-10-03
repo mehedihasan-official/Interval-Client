@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
 import Loading from "../Loading";
 import ResortImage from "../ResortImage";
-import { resolveImage } from "../../utils/resortImages";
 import ExchangeGetaways from "./ExchangeGetaways/ExchangeGetaways";
 import TabContent from "./TabContent/TabContent";
 
@@ -24,27 +23,14 @@ const SingleResortPage = () => {
       setResort(foundResort);
 
       if (foundResort) {
-        const seed = foundResort._id || foundResort.resortName || "";
-
-        // Collect every populated image field, in order. Simple and
-        // explicit — no clever filtering that can accidentally drop or
-        // keep the wrong slot.
-        const rawImages = [
+        const resortImages = [
           foundResort.img,
           foundResort.img2,
           foundResort.img3,
           foundResort.img4,
         ].filter((url) => typeof url === "string" && url.trim().length > 0);
 
-        // If the resort has zero real photos, still show one image (a
-        // resolved fallback) so the carousel always has something to
-        // render instead of an empty array.
-        const resolvedImages =
-          rawImages.length > 0
-            ? rawImages.map((url, i) => resolveImage(url, `${seed}-${i}`))
-            : [resolveImage(undefined, seed)];
-
-        setImages(resolvedImages);
+        setImages(resortImages);
         setCurrentImage(0); // reset to the first photo whenever the resort changes
       } else {
         setImages([]);
@@ -119,7 +105,6 @@ const SingleResortPage = () => {
           <ResortImage
             src={images[currentImage]}
             alt={resortName || "Resort"}
-            seed={`${resort._id || resort.resortName || ""}-${currentImage}`}
             className="w-full h-[300px] md:h-[450px] rounded-lg shadow-md transition-all duration-500"
           />
 
@@ -192,7 +177,6 @@ const SingleResortPage = () => {
                 key={index}
                 src={img}
                 alt={`${resortName || "Resort"} photo ${index + 1}`}
-                seed={`${resort._id || resort.resortName || ""}-thumb-${index}`}
                 onClick={() => setCurrentImage(index)}
                 className={`w-16 h-16 md:w-20 md:h-20 flex-shrink-0 cursor-pointer rounded-md border-2 transition-all ${
                   index === currentImage

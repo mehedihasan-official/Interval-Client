@@ -12,7 +12,6 @@ const ResortCard = ({resort}) => {
             <ResortImage
               src={resort.img}
               alt={resort.resortName || resort.name}
-              seed={resort._id || resort.resortName || ""}
               className="w-full h-48 mb-3"
             />
             {/* Resort Name */}

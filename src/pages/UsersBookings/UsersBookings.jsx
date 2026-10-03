@@ -43,7 +43,6 @@ const UsersBookings = () => {
                   <ResortImage
                     src={booking.resort?.img}
                     alt="Resort"
-                    seed={booking.resort?._id || booking.resort?.resortName || String(index)}
                     className="w-24 h-24 rounded"
                   />
                 </td>
@@ -66,7 +65,6 @@ const UsersBookings = () => {
                 <ResortImage
                   src={booking.resort?.img}
                   alt="Resort"
-                  seed={booking.resort?._id || booking.resort?.resortName || String(index)}
                   className="w-24 h-24 rounded-md"
                 />
               </figure>
